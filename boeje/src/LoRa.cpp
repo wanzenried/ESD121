@@ -1,5 +1,9 @@
 #include <Arduino.h>
 
+#define rst 9
+#define cs 10
+#define irq 2
+
 void sendBesked(int a);
 void printBesked(int a);
 
