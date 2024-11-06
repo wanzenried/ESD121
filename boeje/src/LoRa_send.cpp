@@ -7,7 +7,6 @@
 #define DIO1 3
 
 void sendBesked(int a);
-void printBesked(int a);
 
 RFM96 radio = new Module(cs, DIO0, rst, DIO1);
 
@@ -45,10 +44,4 @@ void sendBesked(int a) {
 
     //på en eller anden måde sende beskeden
 
-}
-
-void printBesked(int a) {
-    Serial.print("Received: ");
-    Serial.print(a);
-    Serial.print("\n");
 }
