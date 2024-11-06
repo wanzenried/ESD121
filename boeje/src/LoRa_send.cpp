@@ -8,6 +8,8 @@
 
 void sendBesked(int a);
 
+int value = 0;
+
 RFM96 radio = new Module(cs, DIO0, rst, DIO1);
 
 
@@ -16,7 +18,7 @@ Serial.begin(9600);
 
 Serial.println("setting up LoRa module");
 
-int state = radio.begin();
+int state = radio.begin(868.0);
 if (state == RADIOLIB_ERR_NONE) {
     Serial.println(F("success!"));
   } else {
@@ -28,19 +30,40 @@ if (state == RADIOLIB_ERR_NONE) {
 }
 
 void loop() {
-sendBesked(45);
-delay(500);  
-// check om vi har modtaget en besked
+  if (value > 50)
+  {
+    value = 0;
+  }
+  sendBesked(value);
 
-//hvis vi har modtaget besked
+  value++;
 
-// modtagBesked(beskeden)
+  delay(1000);
+
 }
 
 void sendBesked(int a) {
     Serial.print("Transmitting: ");
-    Serial.print(a);
-    Serial.print("\n");
+    Serial.print("hello world");
+    Serial.print(" ... ");
+
+    int status = radio.transmit("hello world");
+
+    if (status == RADIOLIB_ERR_NONE)
+    {
+      Serial.println(F(" success!"));
+
+      Serial.print("datarate");
+      Serial.print(radio.getDataRate());
+      Serial.println(" bps");
+    }
+    else {
+      // some other error occurred
+      Serial.print(F("failed, code "));
+      Serial.println(status);
+
+    }
+    
 
     //på en eller anden måde sende beskeden
 
