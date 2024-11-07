@@ -14,12 +14,12 @@ void listen();
 
 // pins used by the APC
 // if we use these pins it can be put directly into the arduino, no breadboard needed. very nice for testing :)
-#define APC_VCC 13
-#define APC_EN  12
-#define APC_RXD 11
-#define APC_TXD 10
-#define APC_AUX 9
-#define APC_SET 8
+#define APC_VCC 13  //5v
+#define APC_EN  12  //should be left floating
+#define APC_RXD 11  //connected to TX on board
+#define APC_TXD 10  //connected to RX on board
+#define APC_AUX 9   //should be left floating
+#define APC_SET 8   //todo: figure out how important this pin is, for now it looks like it needs to be set high
 
 SoftwareSerial S0(APC_TXD,APC_RXD); // RX , TX (yes this is supposed to be the opposite to what is on the apc220 board...)
 
@@ -34,9 +34,6 @@ void setup() {
 
     pinMode(APC_VCC, OUTPUT);
     digitalWrite(APC_VCC, HIGH);    //turn on power to the apc
-
-    pinMode(APC_EN, OUTPUT);
-    digitalWrite(APC_EN, LOW);     //enable the apc
 
     pinMode(APC_SET, OUTPUT);
     digitalWrite(APC_SET, HIGH);
