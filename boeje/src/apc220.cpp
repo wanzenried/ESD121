@@ -41,3 +41,14 @@ void setup() {
 void loop() {
     
 }
+
+void sendMsg() {
+    S0.println("hello world!");
+}
+
+void listen() {
+    while (S0.available() > 0) // if there is something in the buffer, print it out
+    {
+        Serial.print(S0.read());
+    }
+}
