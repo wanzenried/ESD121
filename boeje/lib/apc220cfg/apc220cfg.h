@@ -27,6 +27,7 @@
 #ifndef _APC220CFG_H
 #define _APC220CFG_H
 
+#include <Arduino.h>
 #include <SoftwareSerial.h>
 
  
