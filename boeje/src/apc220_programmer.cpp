@@ -1,3 +1,12 @@
+//How to use:
+//put apc220 directly into arduino from pin 8-GND with the antenna pointing away from the board
+//choose env:apc_settings if using platformio.
+//upload this program -> wait -> your apc, should now be configured
+//there will be more information is the serial terminal
+
+//Code to configure an apc unit, the following is written by jensD
+//https://jensd.dk/doc/arduino/apc220/apc220code.html
+
 #include <Arduino.h>
 
 #include "apc220cfg.h"
