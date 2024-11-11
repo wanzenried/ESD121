@@ -20,7 +20,7 @@ float omregngrader(char *Koordinaterstring,char retning){ //Vi bruger en pointer
 
 void nmeatjekker(char *nmeasat){
   if (strncmp(nmeasat, "$GPGLL", 6) == 0){// Den linje kode sammenligner med brug af (strncmp) som outputter 0 hvis det er ens. 6 taller tjekker hvor mange karaktere den skal tjekke. hvilket er 6 da der er 6 strings i $GPGLL. Vi tjekker denne da der er bestemt format i $gpgll formatet, som letgøre kodning
-  
+    Serial.print(nmeasat);
     char *ting[10]; // Et array af pointer der peger på hver begyndelse i en sætning. f.ek.s En sætning bliver gemt i arr[0], og en anden bliver gemt i arr[1]
 
     int tingtaeller = 0; // Tæller antallet af sætninger
