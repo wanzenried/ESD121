@@ -13,6 +13,8 @@ softAPC::softAPC(int rxPin, int txPin, int en, int set, int aux) :
     pinMode(_AUX, INPUT);
 }
 
+//use only for startup as this function has a built in 100ms delay
+//If you want to change baud rate use the config function instead
 void softAPC::begin(long speed)
 {
     digitalWrite(_EN, HIGH);
@@ -62,6 +64,7 @@ int softAPC::config(uint32_t freq, uint8_t airBaud, uint8_t power, uint8_t baud,
 
     if(strcmp(cmd, rpl) == 0)
     {
+        softAPC::begin(newBaud); // set new baud rate
         return 0;
     }
     else
