@@ -31,7 +31,7 @@ public:
 
     int config(uint32_t frequency, uint8_t rfBaud, uint8_t power, uint8_t baud, uint8_t parity);
     int send(char *msg);
-    int receive(char *reply);
+    int receive(char *reply, uint16_t len);
 
     ~apc220();
 };
