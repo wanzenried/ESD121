@@ -15,6 +15,10 @@ private:
     uint8_t _SET;
 
     int calcBaudFromParam(uint8_t param);
+    void wrConfig(char *cmd, char* reply);
+    void rdConfig(char *reply);
+    void enterSetMode();
+    void exitSetMode();
 public:
     softAPC(int rxPin, int txPin, int en, int set, int aux);
     void begin(long speed);

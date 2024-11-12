@@ -54,9 +54,20 @@ int softAPC::config(uint32_t freq, uint8_t airBaud, uint8_t power, uint8_t baud,
     int newBaud = calcBaudFromParam(baud);
 
     char cmd[15];
+    char rpl[20]; //should be the same length as cmd, but just in case
 
-    sprintf(cmd, "%d %d %d %d %d", freq, airBaud, power, baud, parity);
-    
+    sprintf(cmd, "%ld %d %d %d %d", freq, airBaud, power, baud, parity);
+
+    wrConfig(cmd, rpl);
+
+    if(strcmp(cmd, rpl) == 0)
+    {
+        return 0;
+    }
+    else
+    {
+        return 32;
+    }
 
 }
 
@@ -74,4 +85,66 @@ int softAPC::calcBaudFromParam(uint8_t param)
 
     return (1200 << param);
 
+}
+
+void softAPC::wrConfig(char *cmd, char *reply)
+{
+    enterSetMode();
+
+    write("WR ");
+    write(cmd);
+    write("\r\n");
+
+    delay(235); // 200 millisecond pr the datasheet + 35 for time to actually send the data
+    char tmpReply[25];
+    char incomingChar;
+    int replyLen = 0;
+
+    while(available())
+    {
+        incomingChar = (char) read();
+        tmpReply[replyLen] = incomingChar;
+        replyLen++;
+    }
+    exitSetMode();
+
+    sprintf(reply, "%.14s", tmpReply + 5); //only put the subset we care about into the reply string
+
+    
+}
+
+void softAPC::rdConfig(char *reply)
+{
+    enterSetMode();
+
+    write("RD\r\n");
+
+    delay(235); // 200 millisecond pr the datasheet + 35 for time to actually send the data
+    char incomingChar;
+    int replyLen = 0;
+
+    while(available())
+    {
+        incomingChar = (char) read();
+        reply[replyLen] = incomingChar;
+        replyLen++;
+    }
+    exitSetMode();
+
+    reply[replyLen-2] = 0x00; //apc sends back "\r\n" which we want to remove 
+
+    
+}
+
+
+void softAPC::enterSetMode()
+{
+    digitalWrite(_SET, LOW);
+    delay(1);
+}
+
+void softAPC::exitSetMode()
+{
+    digitalWrite(_SET, HIGH);
+    delay(10);
 }
