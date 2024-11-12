@@ -1,5 +1,4 @@
 #include <Arduino.h>
-#include <apc220cfg.h>
 #include <stdlib.h>
 #include <apc220.h>
 
@@ -42,30 +41,10 @@ void config()
     digitalWrite(APC_VCC, HIGH);
 
     apc220.begin(9600);
-    //apc220.setTimeout(400);
 
-    apc220cfg cfg(&apc220, APC_SET);
+    apc220.config(433000, 2, 9, 3, 0);
 
-    delay(500);     // time to let the apc220 start up
-
-    Serial.println("Writing...");
-
-    cfg.wrCfg("433000 2 9 3 0");
-
-    // show new config
-    
-
-	if (0 == cfg.rdCfg(x)) {
-		// we did read a config
-		Serial.print("write success: ");
-		Serial.println(x);
-	}
-	else {
-		Serial.println("write failed");
-		// nope
-	}
-
-    
+    apc220.setTimeout(400);
 
 }
 
