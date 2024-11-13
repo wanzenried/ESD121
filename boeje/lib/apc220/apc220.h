@@ -1,4 +1,12 @@
-
+/*
+*   Library for using APC220 radio module
+*   This library extends softwareSerial
+*
+*   parts of the code are adapted from code written by Jens Dalsgaard @ https://jensd.dk/doc/wless/apc220-radio/index.html
+*   Here you can also find the datasheet for the radio module
+*
+*   Jacob Wanzenried 13/11/2024
+*/
 
 #ifndef _APC220_H_
 #define _APC220_H_
