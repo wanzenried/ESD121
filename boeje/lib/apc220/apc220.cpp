@@ -60,11 +60,13 @@ int softAPC::config(uint32_t freq, uint8_t airBaud, uint8_t power, uint8_t baud,
 
     sprintf(cmd, "%ld %d %d %d %d", freq, airBaud, power, baud, parity);
 
+    SoftwareSerial::begin(9600);
+
     wrConfig(cmd, rpl);
 
     if(strcmp(cmd, rpl) == 0)
     {
-        softAPC::begin(newBaud); // set new baud rate
+        SoftwareSerial::begin(newBaud); // set new baud rate
         return 0;
     }
     else
