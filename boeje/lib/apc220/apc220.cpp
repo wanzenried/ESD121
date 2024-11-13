@@ -1,6 +1,6 @@
 #include <apc220.h>
 
-
+//Constructor (also calls the constructor for softwareserial)
 softAPC::softAPC(int rxPin, int txPin, int en, int set, int aux) :
     SoftwareSerial(rxPin, txPin)
 
@@ -64,16 +64,16 @@ int softAPC::config(uint32_t freq, uint8_t airBaud, uint8_t power, uint8_t baud,
 
     int newBaud = calcBaudFromParam(baud);
 
-    char cmd[15];
+    char cmd[15]; 
     char rpl[20]; //should be the same length as cmd, but just in case
 
-    sprintf(cmd, "%ld %d %d %d %d", freq, airBaud, power, baud, parity);
+    sprintf(cmd, "%ld %d %d %d %d", freq, airBaud, power, baud, parity); // Create formatted string from the supplied values and write it to cmd
 
-    SoftwareSerial::begin(9600);
+    SoftwareSerial::begin(9600); // set baudrate to setting rate (from datasheet)
 
     wrConfig(cmd, rpl);
 
-    if(strcmp(cmd, rpl) == 0)
+    if(strcmp(cmd, rpl) == 0)   // if reply and command are the samme, the settings was saved
     {
         SoftwareSerial::begin(newBaud); // set new baud rate
         return 0;
@@ -100,11 +100,14 @@ int softAPC::safeSend(char *msg)
         return -1;  //cannot send, currently receiving data
     }
 
-    return write(msg);
+    return write(msg);  // send message and return the number og bytes sent
     
-
 }
 
+// calculates the baud rate based on the parameter supplied
+// from the datasheet following values are valid: 1200 2400 4800 9600 19200 38400 57600
+//starting from n = 0 the first 6 can be calculated with the formula 1200 * 2^n
+//the last allowed value doesnt follow the formula, so it is hardcoded
 int softAPC::calcBaudFromParam(uint8_t param)
 {
     if (param > 6)
@@ -117,10 +120,12 @@ int softAPC::calcBaudFromParam(uint8_t param)
         return 57600;
     }
 
-    return (1200 << param);
+    return (1200 << param); //bit shifting instead of multiplying with 2 raised to a power. This has the same result, but much faster
 
 }
 
+//sets the module to "settings mode" then uploads new settings. the board will reply with the settings it stored, these will be returnen in *reply
+//Also trims the response so it is on the following form "FFFFFF R P B C" (14 bytes + string terminator)
 void softAPC::wrConfig(char *cmd, char *reply)
 {
     enterSetMode();
@@ -134,7 +139,7 @@ void softAPC::wrConfig(char *cmd, char *reply)
     char incomingChar;
     int replyLen = 0;
 
-    while(available())
+    while(available()) //read the reply
     {
         incomingChar = (char) read();
         tmpReply[replyLen] = incomingChar;
@@ -147,6 +152,8 @@ void softAPC::wrConfig(char *cmd, char *reply)
     
 }
 
+//get current settings from the module
+// response is on the following form: "PARA FFFFFF R P B C" (19 bytes + string terminator)
 void softAPC::rdConfig(char *reply)
 {
     enterSetMode();
@@ -157,7 +164,7 @@ void softAPC::rdConfig(char *reply)
     char incomingChar;
     int replyLen = 0;
 
-    while(available())
+    while(available()) //read the reply
     {
         incomingChar = (char) read();
         reply[replyLen] = incomingChar;
@@ -174,13 +181,13 @@ void softAPC::rdConfig(char *reply)
 void softAPC::enterSetMode()
 {
     digitalWrite(_SET, LOW);
-    delay(1);
+    delay(1);   //from datasheet
 }
 
 void softAPC::exitSetMode()
 {
     digitalWrite(_SET, HIGH);
-    delay(10);
+    delay(10);  //from datasheet
 }
 
 void softAPC::checkReceiving()
