@@ -1,6 +1,5 @@
 #include <Arduino.h>
-#include <apc220cfg.h>
-#include <SoftwareSerial.h>
+#include <apc220.h>
 
 // Parts of this code is adapted from JensD at
 // https://jensd.dk/doc/arduino/apc220/apc220code.html
@@ -21,16 +20,15 @@ void listen();
 #define APC_AUX 9   //should be left floating
 #define APC_SET 8   //todo: figure out how important this pin is, for now it looks like it needs to be set high
 
-SoftwareSerial S0(APC_TXD,APC_RXD); // RX , TX (yes this is supposed to be the opposite to what is on the apc220 board...)
 
-apc220cfg apc(&S0, APC_SET); // serial "instance", set pin
+softAPC apc220(APC_TXD, APC_RXD, APC_EN, APC_SET, APC_AUX);
 
 char c[20];
 
 void setup() {
     Serial.begin(9600); //communication with computer
-    S0.begin(9600);     //communication with apc220
-    S0.setTimeout(3000);
+    apc220.begin(9600);     //communication with apc220
+    apc220.setTimeout(3000);
 
     pinMode(APC_VCC, OUTPUT);
     digitalWrite(APC_VCC, HIGH);    //turn on power to the apc
@@ -60,13 +58,13 @@ void loop() {
 
 void sendMsg() {
     Serial.println("sending message...");
-    S0.println("hello world!");
+    apc220.println("hello world!");
 }
 
 void listen() {
-    if (S0.available() > 0){
+    if (apc220.available() > 0){
 
-        S0.readBytesUntil('\n',c, 19);
+        apc220.readBytesUntil('\n',c, 19);
 
         Serial.print("i recieved:  ");
         Serial.println(c);
