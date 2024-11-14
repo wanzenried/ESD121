@@ -66,7 +66,7 @@ void nmeatjekker(char *nmeasat){
 
       float longituder = omregngrader(longitude, oest[0]); // same som overstående
 
-      Serial.println("Jeg er her ved indsamling af koordinater og print af omregning"); // Debugging
+      //Serial.println("Jeg er her ved indsamling af koordinater og print af omregning"); // Debugging
 
       Serial.println("Latitude: ");
       Serial.println(lat, 6);
