@@ -2,18 +2,9 @@
 #include <Wire.h>
 #include "I2Cdev.h"
 #include <MPU6050.h>
+#include <mpu6050_customlib.h>
 
 MPU6050 mpu;
-
-// Get acceleration data
-int16_t ax = mpu.getAccelerationX();
-int16_t ay = mpu.getAccelerationY();
-int16_t az = mpu.getAccelerationZ();
-
-// Get gyroscope data
-int16_t gx = mpu.getRotationX();
-int16_t gy = mpu.getRotationY();
-int16_t gz = mpu.getRotationZ();
 
 void setup() {
     Serial.begin(19200);
@@ -29,20 +20,22 @@ void setup() {
 }
 
 void loop() {
-    mpu.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
+    // Get acceleration data
+    int16_t ax = mpu.getAccelerationX();
+    int16_t ay = mpu.getAccelerationY();
+    int16_t az = mpu.getAccelerationZ();
 
-    float gyroX = gx / 131.0;
+    // Get gyroscope data
+    int16_t gx = mpu.getRotationX();
+    int16_t gy = mpu.getRotationY();
+    int16_t gz = mpu.getRotationZ();
+
+    //mpu.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
+
+    /*float gyroX = gx / 131.0;
     float gyroY = gy / 131.0;
-    float gyroZ = gz / 131.0;
+    float gyroZ = gz / 131.0;*/
+    
+    print_acceleration_data(&ax, &ay, &az);
 
-    Serial.println("Gyro x: ");
-    Serial.println(gyroX);
-
-    Serial.println("Gyro y: ");
-    Serial.println(gyroY);
-
-    Serial.println("Gyro z: ");
-    Serial.println(gyroZ);
-
-    delay(500);
 }
