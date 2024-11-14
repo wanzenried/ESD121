@@ -1,6 +1,17 @@
 #include<stdlib.h>
 #include<string.h>
 #include<Arduino.h>
+#include <SoftwareSerial.h>
+
+// definitions
+
+#define gpsRXpin 10
+#define gpsTXpin 11
+
+// global variables
+
+SoftwareSerial gps(gpsRXpin, gpsTXpin); //HUSK!!! At rx til tx og tx til rx, ellers kommunikere gps modulet ikke med boardet.
+
 
 float omregngrader(char *Koordinaterstring,char retning){ //Vi bruger en pointer til en array med forskellige strings, Det bliver mere klart jo længere ned vi kommer :)
   float koordinaterFLOAT = atof(Koordinaterstring); // Konverter string til float (Library)
@@ -72,16 +83,15 @@ void nmeatjekker(char *nmeasat){
 void setup()
 {
   Serial.begin(9600);  // Sætter baud rate i forhold til databladet for gps modul
-  Serial3.begin(9600); //Sætter baud rate i forhold til databladet for gps modul| Serial 3 er defineret som pins tx3 pin 14 og rx3 pin 15. HUSK!!! At rx til tx og tx til rx, ellers kommunikere gps modulet ikke med boardet.
+  gps.begin(9600); //Sætter baud rate i forhold til databladet for gps modul|
 }
 
 void loop(){ // Det her segment er mega fucked og grimt at læse. Bare stol på kommentarene.
   static char nmea[100]; //et array der gemmer hvert enkel nmea karakter der bliver spyttet ud
   static size_t tjekarray=0; // Går igennem array, altså funktionen for dette er at tracke hvorhenne man er i nmea array
 
-  while(Serial3.available()>0){ // While gps modulet kommunikere med arduino. Den er static for at beholde værdierne igennem forskellige funktioner. (LIdt ligesom matching i rust tror jeg);
-
-    char c = Serial3.read(); // Gemmer det gps modulet spytter ud i en char variabel
+  while(gps.available()>0){ // While gps modulet kommunikere med arduino. Den er static for at beholde værdierne igennem forskellige funktioner. (LIdt ligesom matching i rust tror jeg);
+    char c = gps.read(); // Gemmer det gps modulet spytter ud i en char variabel
 
     if(tjekarray<sizeof(nmea)-1){ //Så vi ikke går over vores nmea array 
 
