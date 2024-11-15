@@ -46,7 +46,8 @@ void loop() {
     
 }
 
-void uint16ToChar()
+// converts a 16bit interger to a charstring, first char will be left byte of integer, second char will be right byte of integer
+void uint16ToChar(uint16_t n, char *result)
 {
     
 }
