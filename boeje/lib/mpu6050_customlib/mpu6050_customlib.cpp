@@ -1,8 +1,5 @@
 #include <mpu6050_customlib.h>
 
-
-
-
 unsigned long zeroStartTime = 0;
 bool zeroTimerStarted = false;
 bool warningActive = false;
