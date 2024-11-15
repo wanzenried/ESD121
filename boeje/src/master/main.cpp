@@ -4,8 +4,6 @@
 
 //defines:
 
-#define ID 0        //Device id, used for identification. Need to make this unique
-
 //APC pins
 #define APC_VCC 13  //5v
 #define APC_EN  12  //[output] HIGH enable, LOW disable
@@ -16,7 +14,13 @@
 
 //function prototypes:
 
+void sendMsg(uint8_t recipientId, char *msg);
+
 //global variables:
+
+const int8_t ID = 0; //this device id
+
+
 
 softAPC radio(APC_TXD, APC_RXD, APC_EN, APC_SET, APC_AUX);
 
@@ -46,13 +50,16 @@ void loop() {
     
 }
 
-// converts a 16bit interger to a charstring, first char will be left byte of integer, second char will be right byte of integer
-void uint16ToChar(uint16_t n, char *result)
+
+void sendMsg(uint8_t recipientId, char *msg)
 {
     
-}
+    uint8_t transmissionLen = strlen(msg) + 2;  // length of msg + 1 byte for sender id + 1 byte for reciever id 
 
-void sendMsg(int16_t recipientId, char *msg)
-{
+    char transmission[transmissionLen + 3];        // string to store transmission before we send it + 2 bytes for start and stop chars + 1 byte for string terminator
 
+    sprintf(transmission, "[%c%c%s%c]",transmissionLen, recipientId, msg, ID);
+
+    radio.write(transmission);
+    
 }
