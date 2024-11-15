@@ -45,3 +45,13 @@ void setup() {
 void loop() {
     
 }
+
+void uint16ToChar()
+{
+    
+}
+
+void sendMsg(int16_t recipientId, char *msg)
+{
+
+}
