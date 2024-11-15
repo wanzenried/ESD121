@@ -2,7 +2,6 @@
 #define _MPU6050_CUSTOMLIB_H_
 
 #include <Arduino.h>
-#include <math.h>
 
 unsigned long zeroStartTime = 0;
 bool zeroTimerStarted = false;
