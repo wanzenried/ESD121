@@ -18,8 +18,11 @@ void sendMsg(uint8_t recipientId, char *msg);
 
 //global variables:
 
-const int8_t ID = 0; //this device id
+const int8_t ID = 0; //this device id [cannot be 0]
 
+
+char sInput[50];
+uint8_t sIndex = 0;
 
 
 softAPC radio(APC_TXD, APC_RXD, APC_EN, APC_SET, APC_AUX);
@@ -28,6 +31,7 @@ void setup() {
 
     // start serial communication with pc
     Serial.begin(9600);
+    Serial.println(Serial.getTimeout());
 
     // turn on power to radio
     pinMode(APC_VCC, OUTPUT);
@@ -35,7 +39,7 @@ void setup() {
 
     // start and configure radio
     radio.begin(9600);
-    int err = radio.config(433000, 2, 9, 3, 0);
+    int err = radio.config(433000, 3, 9, 3, 0);
 
     if (err != 0)
     {
@@ -47,6 +51,15 @@ void setup() {
 }
 
 void loop() {
+    if (Serial.available() > 0)
+    {
+        uint8_t nId = Serial.parseInt();
+        int read = Serial.readBytesUntil('\n', sInput, 45);
+        sInput[read] = '\0';
+        
+        sendMsg(nId, sInput);
+
+    }
     
 }
 
@@ -56,10 +69,25 @@ void sendMsg(uint8_t recipientId, char *msg)
     
     uint8_t transmissionLen = strlen(msg) + 2;  // length of msg + 1 byte for sender id + 1 byte for reciever id 
 
-    char transmission[transmissionLen + 3];        // string to store transmission before we send it + 2 bytes for start and stop chars + 1 byte for string terminator
+    char transmission[transmissionLen + 4];        // string to store transmission before we send it + 2 bytes for start and stop chars + 1 byte for transmission length + 1 byte for string terminator
 
-    sprintf(transmission, "[%c%c%s%c]",transmissionLen, recipientId, msg, ID);
+    sprintf(transmission, "[%c%c%c%s]",transmissionLen, recipientId, ID, msg);
 
-    radio.write(transmission);
+    for (int i = 0, j = transmissionLen + 4; i < j; i++)
+    {
+        Serial.print(transmission[i], HEX);
+        Serial.print(" ");
+    }
+    Serial.print("\n\n");
+
+    for (int i = 0, j = transmissionLen + 4; i < j; i++)
+    {
+        radio.write(transmission[i]);
+        
+    }
+    
+    //Serial.println(transmission);
+
+    //radio.write(transmission);
     
 }
