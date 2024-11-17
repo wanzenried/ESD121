@@ -15,6 +15,7 @@
 //function prototypes:
 
 void sendMsg(uint8_t recipientId, byte *msg, uint8_t msgLen);
+void recieveMsg(char *buffer, uint8_t *bufferLen);
 void decode();
 
 //global variables:
@@ -23,6 +24,7 @@ const uint8_t ID = 1; //this device id
 
 
 char rInput[50];
+uint8_t rLen;
 
 
 softAPC radio(APC_TXD, APC_RXD, APC_EN, APC_SET, APC_AUX);
@@ -39,6 +41,7 @@ void setup() {
 
     // start and configure radio
     radio.begin(9600);
+    //Serial.println(radio.getTimeout());
     int err = radio.config(433000, 3, 9, 3, 0);
 
     if (err != 0)
@@ -55,38 +58,7 @@ void loop() {
     {
         if (radio.read() == '[')
         {
-            Serial.println("Recieved start of transmission");
-
-            int transmissionLen = radio.read();
-
-            Serial.print("Transmission is of length ");
-            Serial.println(transmissionLen);
-
-            Serial.print("raw transmission is: ");
-
-            for (int i = 0; i < transmissionLen; i++)
-            {
-                rInput[i] = radio.read();
-                Serial.print(rInput[i], HEX);
-                Serial.print(" ");
-                delay(2);
-            }
-            rInput[transmissionLen] = '\0';
-            
-
-            
-            Serial.println("");
-
-            if (radio.read() == ']')
-            {
-                Serial.println("Recieved end of transmission");
-                decode();
-            }
-            else
-            {
-                Serial.println("Sumting wrogn");
-            }
-            
+            recieveMsg(rInput, &rLen);
         }
         
     }
@@ -122,4 +94,35 @@ void sendMsg(uint8_t recipientId, byte *msg, uint8_t msgLen)
     radio.write(msg, msgLen);       // send message, this way of doing it does not care if there is 0x00 chars in the middle of msg
     radio.write(']');               // specifies end of message
     
+}
+
+void recieveMsg(char *buffer, uint8_t *bufferLen)
+{
+
+    Serial.println("Recieved start of transmission");
+
+    int transmissionLen = radio.read();
+
+    Serial.print("Transmission is of length ");
+    Serial.println(transmissionLen);
+
+
+    *bufferLen = radio.readBytes(buffer,transmissionLen);
+
+    Serial.print("bytes recieved: ");
+    Serial.println(rLen);
+
+    buffer[*bufferLen] = '\0';
+    
+
+
+    if (radio.read() == ']')
+    {
+        Serial.println("Recieved end of transmission");
+        decode();
+    }
+    else
+    {
+        Serial.println("Sumting wrogn");
+    }
 }
