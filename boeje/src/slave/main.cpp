@@ -68,15 +68,12 @@ void loop() {
 
 void decode()
 {
-    uint8_t recId = rInput[0];
-    uint8_t sendId = rInput[1];
+    uint8_t sendId = rInput[0];
 
-    Serial.print("recipient id: ");
-    Serial.println(recId);
     Serial.print("Sender id: ");
     Serial.println(sendId);
     Serial.print("msg: ");
-    Serial.println(rInput+2);
+    Serial.println(rInput+1);
 
 }
 
@@ -105,6 +102,18 @@ void recieveMsg(char *buffer, uint8_t *bufferLen)
 
     Serial.print("Transmission is of length ");
     Serial.println(transmissionLen);
+
+    uint8_t recvId = radio.read();      //first byte of transmission is the id of the device that is supposed to recieve the message
+    transmissionLen--;
+
+    Serial.print("Transmission is intended for device id: ");
+    Serial.println(recvId);
+
+    if(recvId != ID)
+    {
+        Serial.println("Transmission is not intended for me");
+        return;
+    }
 
 
     *bufferLen = radio.readBytes(buffer,transmissionLen);
