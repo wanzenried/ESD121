@@ -14,15 +14,15 @@
 
 //function prototypes:
 
-void sendMsg(uint8_t recipientId, char *msg);
+void sendMsg(uint8_t recipientId, byte *msg, uint8_t msgLen);
 
 //global variables:
 
-const int8_t ID = 0; //this device id [cannot be 0]
+const uint8_t ID = 0; //this device id
 
 
-char sInput[50];
-uint8_t sIndex = 0;
+byte sInput[50];
+uint8_t sLen = 0;
 
 
 softAPC radio(APC_TXD, APC_RXD, APC_EN, APC_SET, APC_AUX);
@@ -54,40 +54,26 @@ void loop() {
     if (Serial.available() > 0)
     {
         uint8_t nId = Serial.parseInt();
-        int read = Serial.readBytesUntil('\n', sInput, 45);
-        sInput[read] = '\0';
+        sLen = Serial.readBytesUntil('\n', sInput, 45);
+        sInput[sLen] = '\0';
         
-        sendMsg(nId, sInput);
+        sendMsg(nId, sInput, sLen);
 
     }
     
 }
 
-
-void sendMsg(uint8_t recipientId, char *msg)
+// Send a message over the radio, i dont think messages should be longer than 100 bytes at most, but maybe we can squeze more through if we need it
+void sendMsg(uint8_t recipientId, byte *msg, uint8_t msgLen)
 {
     
-    uint8_t transmissionLen = strlen(msg) + 2;  // length of msg + 1 byte for sender id + 1 byte for reciever id 
+    uint8_t transmissionLen = msgLen + 2;  // length of msg + 1 byte for sender id + 1 byte for reciever id
 
-    char transmission[transmissionLen + 4];        // string to store transmission before we send it + 2 bytes for start and stop chars + 1 byte for transmission length + 1 byte for string terminator
-
-    sprintf(transmission, "[%c%c%c%s]",transmissionLen, recipientId, ID, msg);
-
-    for (int i = 0, j = transmissionLen + 4; i < j; i++)
-    {
-        Serial.print(transmission[i], HEX);
-        Serial.print(" ");
-    }
-    Serial.print("\n\n");
-
-    for (int i = 0, j = transmissionLen + 4; i < j; i++)
-    {
-        radio.write(transmission[i]);
-        
-    }
-    
-    //Serial.println(transmission);
-
-    //radio.write(transmission);
+    radio.write('[');               // specifies start of message
+    radio.write(transmissionLen);
+    radio.write(recipientId);
+    radio.write(ID);
+    radio.write(msg, msgLen);       // send message, this way of doing it does not care if there is 0x00 chars in the middle of msg
+    radio.write(']');               // specifies end of message
     
 }

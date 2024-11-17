@@ -14,12 +14,12 @@
 
 //function prototypes:
 
-void sendMsg(uint8_t recipientId, char *msg);
+void sendMsg(uint8_t recipientId, byte *msg, uint8_t msgLen);
 void decode();
 
 //global variables:
 
-const int8_t ID = 1; //this device id
+const uint8_t ID = 1; //this device id
 
 
 char rInput[50];
@@ -109,15 +109,17 @@ void decode()
 }
 
 
-void sendMsg(uint8_t recipientId, char *msg)
+// Send a message over the radio, i dont think messages should be longer than 100 bytes at most, but maybe we can squeze more through if we need it
+void sendMsg(uint8_t recipientId, byte *msg, uint8_t msgLen)
 {
     
-    uint8_t transmissionLen = strlen(msg) + 2;  // length of msg + 1 byte for sender id + 1 byte for reciever id 
+    uint8_t transmissionLen = msgLen + 2;  // length of msg + 1 byte for sender id + 1 byte for reciever id
 
-    char transmission[transmissionLen + 3];        // string to store transmission before we send it + 2 bytes for start and stop chars + 1 byte for string terminator
-
-    sprintf(transmission, "[%c%c%c%s]",transmissionLen, recipientId, ID, msg);
-
-    radio.write(transmission);
+    radio.write('[');               // specifies start of message
+    radio.write(transmissionLen);
+    radio.write(recipientId);
+    radio.write(ID);
+    radio.write(msg, msgLen);       // send message, this way of doing it does not care if there is 0x00 chars in the middle of msg
+    radio.write(']');               // specifies end of message
     
 }
