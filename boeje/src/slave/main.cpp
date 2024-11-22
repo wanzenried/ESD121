@@ -21,6 +21,11 @@ void decode();
 
 const uint8_t ID = 1; //this device id
 
+uint16_t biggestAccel = 0;      // biggest acceleration recorded since last transmission (should contain the length of the acceleration vector)
+uint16_t batteryVoltage = 0;    //battery voltage, stored as a number between 0-1023, same as analogread output
+uint16_t lampCycles = 0;        //count of times we've seen the lamp turn on and off since last transmission
+char geohash[12];               //todo: geohash of our location this will be hardcoded until we implement the geohash function
+
 
 char rInput[50];
 uint8_t rLen;
@@ -32,7 +37,17 @@ void setup() {
 
     // start serial communication with pc
     Serial.begin(9600);
-    Serial.println(Serial.getTimeout());
+
+    Serial.println("setting dummy values for internal vaiables");
+    biggestAccel = 987;
+    batteryVoltage = 603;
+    lampCycles = 1200;
+    sprintf(geohash, "12345678901");
+
+    Serial.println(biggestAccel);
+    Serial.println(batteryVoltage);
+    Serial.println(lampCycles);
+    Serial.println(geohash);
 
 
     // start and configure radio
