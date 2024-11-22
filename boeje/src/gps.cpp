@@ -5,8 +5,8 @@
 
 // definitions
 
-#define gpsRXpin 6
-#define gpsTXpin 7
+#define gpsRXpin 5
+#define gpsTXpin 4
 
 // global variables
 
