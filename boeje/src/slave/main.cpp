@@ -16,6 +16,7 @@
 void sendMsg(uint8_t recipientId, byte *msg, uint8_t msgLen);
 void recieveMsg(char *buffer, uint8_t *bufferLen);
 void decode();
+void dumpValues();
 
 //global variables:
 
@@ -83,8 +84,27 @@ void decode()
 
     Serial.print("Sender id: ");
     Serial.println(sendId);
+
+    if(rInput[1] == 'v' && rInput[2] == 'd')
+    {
+        dumpValues();
+    }
+    else
+    {
     Serial.print("msg: ");
     Serial.println(rInput+1);
+    }
+
+
+}
+
+void dumpValues()
+{
+    Serial.println(biggestAccel);
+    Serial.println(batteryVoltage);
+    Serial.println(lampCycles);
+    Serial.println(geohash);
+
 
 }
 
