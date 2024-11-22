@@ -5,12 +5,11 @@
 //defines:
 
 //APC pins
-#define APC_VCC 13  //5v
-#define APC_EN  12  //[output] HIGH enable, LOW disable
-#define APC_RXD 11  //connected to TX on board
-#define APC_TXD 10  //connected to RX on board
-#define APC_AUX 9   //[input] HIGH when receiving data, else low
-#define APC_SET 8   //[output] HIGH for normal function, LOW to change settings
+#define APC_EN  7  //[output] HIGH enable, LOW disable
+#define APC_RXD 8  //connected to TX on board
+#define APC_TXD 9  //connected to RX on board
+#define APC_AUX 10   //[input] HIGH when receiving data, else low
+#define APC_SET 11   //[output] HIGH for normal function, LOW to change settings
 
 //function prototypes:
 
@@ -35,9 +34,6 @@ void setup() {
     Serial.begin(9600);
     Serial.println(Serial.getTimeout());
 
-    // turn on power to radio
-    pinMode(APC_VCC, OUTPUT);
-    digitalWrite(APC_VCC, HIGH);
 
     // start and configure radio
     radio.begin(9600);
