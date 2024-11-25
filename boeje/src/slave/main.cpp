@@ -51,7 +51,7 @@ void setup() {
 
     //split16bit(0xaaff, geohash, 0);
 
-    voltageSetup(10, 20);
+    voltageSetup(10, 2);
 
     int err = beginRadio();
 

@@ -22,10 +22,6 @@ void updateVoltage(uint16_t *output)
         delay(sampleDelay);
     }
 
-    *output = (sum / sampleCount); //taking the average of samples
-
-    float voltage = *output * 0.02205;  //convert result from 0-1023 to 0-18
-    Serial.println(voltage);
-    
+    *output = (sum / sampleCount); //taking the average of samples, should be multiplied by approx 0.02205 to get the correct voltage
     
 }
