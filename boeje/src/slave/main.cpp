@@ -17,7 +17,7 @@
 
 //function prototypes:
 
-void dumpValues(uint16_t biggestAccel, uint16_t batteryVoltage, uint16_t lampCycles, char *geohash);
+void packValues(uint16_t biggestAccel, uint16_t batteryVoltage, uint16_t lampCycles, char *geohash);
 void split16bit(uint16_t n, char *buffer, uint8_t *index);
 
 //global variables:
@@ -28,6 +28,8 @@ uint16_t lampCycles = 0;        //count of times we've seen the lamp turn on and
 char geohash[12];               //todo: geohash of our location this will be hardcoded until we implement the geohash function
 
 uint8_t sender = 0;
+char dataPck[18];
+uint8_t dataLen = 0;
 
 
 
@@ -66,11 +68,12 @@ void loop() {
     switch (recieveCommand(&sender))
     {
     case VARDMP:     //send back stored values
-        dumpValues(biggestAccel, batteryVoltage, lampCycles, geohash);
+        packValues(biggestAccel, batteryVoltage, lampCycles, geohash);
+        sendMsg(sender, dataPck, dataLen);
         break;
 
     case RESEND:     //resend last message
-
+        sendMsg(sender, dataPck, dataLen);
         break;
     
     case NOCMD:
@@ -99,24 +102,21 @@ void loop() {
 }
 
 
-void dumpValues(uint16_t biggestAccel, uint16_t batteryVoltage, uint16_t lampCycles, char *geohash)
+void packValues(uint16_t biggestAccel, uint16_t batteryVoltage, uint16_t lampCycles, char *geohash)
 {
     Serial.println(biggestAccel);
     Serial.println(batteryVoltage);
     Serial.println(lampCycles);
     Serial.println(geohash);
 
-    char data[18]; //two bytes for each number, and 12 for the geohash
-    uint8_t dataPos = 0;
+    //char data[18]; //two bytes for each number, and 12 for the geohash
+    dataLen = 0;
 
-    split16bit(biggestAccel, data, &dataPos);
-    split16bit(batteryVoltage, data, &dataPos);
-    split16bit(lampCycles, data, &dataPos);
-    strcpy(data+dataPos, geohash);
-
-
-    sendMsg(sender, data, 17);
-    
+    split16bit(biggestAccel, dataPck, &dataLen);
+    split16bit(batteryVoltage, dataPck, &dataLen);
+    split16bit(lampCycles, dataPck, &dataLen);
+    strcpy(dataPck+dataLen, geohash);
+    dataLen += strlen(geohash);
 }
 
 void split16bit(uint16_t n, char *buffer, uint8_t *index)

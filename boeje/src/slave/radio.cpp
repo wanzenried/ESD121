@@ -34,8 +34,7 @@ cmd recieveCommand(uint8_t *senderID)
         {
             break;
         }
-        
-        return VARDMP;
+
     }
     return NOCMD;
 }
