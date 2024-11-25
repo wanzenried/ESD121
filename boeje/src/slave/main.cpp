@@ -1,6 +1,14 @@
 #include <Arduino.h>
-#include <apc220.h>
 #include <stdlib.h>
+
+//our libraries / includes
+#include <apc220.h>
+
+#include <slave/accel.h>
+#include <slave/gps.h>
+#include <slave/current.h>
+#include <slave/voltage.h>
+
 
 //defines:
 
@@ -66,16 +74,31 @@ void setup() {
 }
 
 void loop() {
+
+    // If there is communication, handle it and send back a response if neccesary
     while (radio.available() > 0)
     {
         if (radio.read() == '[')
         {
             recieveMsg(rInput, &rLen);
         }
-        
     }
+
+    //!Write functions here
+
+    //Get Gps data
+    updateGps(geohash);
+
+    //Get battery voltage
+    updateVoltage(&batteryVoltage);
+
+    //Meassure current
+    updateCurrent(&lampCycles);
+
+    //Get acceleration
+    updateAccel(&biggestAccel);
     
-    
+
 }
 
 void decode()
