@@ -16,16 +16,28 @@ int beginRadio()
     return radio.config(433000, 3, 9, 3, 0);
 }
 
-int recieveCommand()
+cmd recieveCommand(uint8_t *senderID)
 {
     while (radio.available() > 0)
     {
-        if (radio.read() == '[')
+        if (radio.read() != '[')
         {
-            return recieveMsg(rInput, &rLen);
+            break;
         }
+
+        if (recieveMsg(rInput, &rLen) == 0)     //recieved a complete message, for us
+        {
+            *senderID = rInput[0];  //first byte is always sender id
+            return decode();
+        }
+        else    //something is wrong, not for us, or incomplete msg
+        {
+            break;
+        }
+        
+        return VARDMP;
     }
-    return 0;
+    return NOCMD;
 }
 
 
@@ -48,7 +60,7 @@ int recieveMsg(char *buffer, uint8_t *bufferLen)
     if(recvId != ID)
     {
         Serial.println("Transmission is not intended for me");
-        return 0;
+        return 1;
     }
 
 
@@ -64,16 +76,16 @@ int recieveMsg(char *buffer, uint8_t *bufferLen)
     if (radio.read() == ']')
     {
         Serial.println("Recieved end of transmission");
-        return decode();
+        return 0;
     }
     else
     {
         Serial.println("Sumting wrogn");
+        return 2;
     }
-    return 0;
 }
 
-int decode()
+cmd decode()
 {
     uint8_t sendId = rInput[0];
 
@@ -82,21 +94,25 @@ int decode()
 
     if(rInput[1] == 'v' && rInput[2] == 'd')
     {
-        return 1;
+        return VARDMP;
+    }
+    else if (rInput[1] == 'r' && rInput[2] == 's')
+    {
+        return RESEND;
     }
     else
     {
     Serial.print("msg: ");
     Serial.println(rInput+1);
     }
-    return 0;
+    return NOCMD;
 
 
 }
 
 
 // Send a message over the radio, i dont think messages should be longer than 100 bytes at most, but maybe we can squeze more through if we need it
-void sendMsg(uint8_t recipientId, byte *msg, uint8_t msgLen)
+void sendMsg(uint8_t recipientId, char *msg, uint8_t msgLen)
 {
     
     uint8_t transmissionLen = msgLen + 2;  // length of msg + 1 byte for sender id + 1 byte for reciever id

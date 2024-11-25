@@ -17,7 +17,8 @@
 
 //function prototypes:
 
-void dumpValues();
+void dumpValues(uint16_t biggestAccel, uint16_t batteryVoltage, uint16_t lampCycles, char *geohash);
+void split16bit(uint16_t n, char *buffer, uint8_t *index);
 
 //global variables:
 
@@ -25,6 +26,8 @@ uint16_t biggestAccel = 0;      // biggest acceleration recorded since last tran
 uint16_t batteryVoltage = 0;    //battery voltage, stored as a number between 0-1023, same as analogread output
 uint16_t lampCycles = 0;        //count of times we've seen the lamp turn on and off since last transmission
 char geohash[12];               //todo: geohash of our location this will be hardcoded until we implement the geohash function
+
+uint8_t sender = 0;
 
 
 
@@ -44,6 +47,8 @@ void setup() {
     Serial.println(lampCycles);
     Serial.println(geohash);
 
+    //split16bit(0xaaff, geohash, 0);
+
     int err = beginRadio();
 
     if (err != 0)
@@ -58,15 +63,17 @@ void setup() {
 void loop() {
 
     // If there is communication, handle it and send back a response if neccesary
-    int command = recieveCommand();
-
-    switch (command)
+    switch (recieveCommand(&sender))
     {
-    case 1:     //send back stored values
-        dumpValues();
+    case VARDMP:     //send back stored values
+        dumpValues(biggestAccel, batteryVoltage, lampCycles, geohash);
         break;
 
-    case 2:     //resend last message
+    case RESEND:     //resend last message
+
+        break;
+    
+    case NOCMD:
 
         break;
     
@@ -92,13 +99,31 @@ void loop() {
 }
 
 
-void dumpValues()
+void dumpValues(uint16_t biggestAccel, uint16_t batteryVoltage, uint16_t lampCycles, char *geohash)
 {
     Serial.println(biggestAccel);
     Serial.println(batteryVoltage);
     Serial.println(lampCycles);
     Serial.println(geohash);
 
+    char data[18]; //two bytes for each number, and 12 for the geohash
+    uint8_t dataPos = 0;
 
+    split16bit(biggestAccel, data, &dataPos);
+    split16bit(batteryVoltage, data, &dataPos);
+    split16bit(lampCycles, data, &dataPos);
+    strcpy(data+dataPos, geohash);
+
+
+    sendMsg(sender, data, 17);
+    
 }
 
+void split16bit(uint16_t n, char *buffer, uint8_t *index)
+{
+    buffer[*index] = n & 0xFF;
+    *index +=1;
+    buffer[*index] = (n>>8) & 0xFF;
+    *index +=1;
+    return;
+}

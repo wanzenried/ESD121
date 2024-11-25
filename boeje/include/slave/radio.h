@@ -1,11 +1,17 @@
 #include <Arduino.h>
 #include <apc220.h>
 
+typedef enum cmd {
+    NOCMD,
+    VARDMP,
+    RESEND
+} cmd;
+
 int beginRadio();
-int recieveCommand();
-void sendMsg(uint8_t recipientId, byte *msg, uint8_t msgLen);
+cmd recieveCommand(uint8_t *senderID);
+void sendMsg(uint8_t recipientId, char *msg, uint8_t msgLen);
 int recieveMsg(char *buffer, uint8_t *bufferLen);
-int decode();
+cmd decode();
 
 //APC pins
 #define APC_EN  7  //[output] HIGH enable, LOW disable
