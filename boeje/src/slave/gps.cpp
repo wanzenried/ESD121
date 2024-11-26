@@ -120,7 +120,7 @@ void nmeaprinter(char *nmeasat, float *latOutput, float *lonOutput) {
 
     if (strncmp(nmeasat, "$GPGLL", 6) == 0) { 
 
-        Serial.println(nmeasat);
+        //Serial.println(nmeasat);
         char *ting[10];
         nmeaparser(nmeasat, ting);
 
