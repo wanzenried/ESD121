@@ -53,11 +53,15 @@ void setup() {
     biggestAccel = 987;
     batteryVoltage = 603;
     lampCycles = 1200;
+    lat = 12.345678;
+    lon = 23.456789;
     sprintf(geohash, "12345678901");
 
     Serial.println(biggestAccel);
     Serial.println(batteryVoltage);
     Serial.println(lampCycles);
+    Serial.println(lat);
+    Serial.println(lon);
     Serial.println(geohash);
 
 
