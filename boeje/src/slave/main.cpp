@@ -3,17 +3,20 @@
 
 //our libraries / includes
 #include <apc220.h>
-
 #include <slave/accel.h>
-#include <slave/gps.h>
 #include <slave/current.h>
 #include <slave/voltage.h>
 #include <slave/radio.h>
 
+//we can only use the gps module if serialdebug is disabled
+//#define SERIALDEBUG
+#ifndef SERIALDEBUG
+#include <slave/gps.h>
+#endif
 
 //defines:
 
-//#define SERIALDEBUG
+
 
 //function prototypes:
 
@@ -64,7 +67,9 @@ void setup() {
 
     currentSetup();
 
+    #ifndef SERIALDEBUG
     gpsSetup();
+    #endif
     
     int err = beginRadio();
 
@@ -111,8 +116,10 @@ void loop() {
 
     //!Write functions here
 
+    #ifndef SERIALDEBUG
     //Get Gps data
     updateGps(&lat, &lon);
+    #endif
 
     //Get battery voltage
     updateVoltage(&batteryVoltage);
