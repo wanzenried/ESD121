@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <stdlib.h>
 #include <string.h>
-#include <SoftwareSerial.h>
+
 
 void updateGps(float *latOutput, float *lonOutput);
 float omregngrader(char *Koordinaterstring, char retning);
