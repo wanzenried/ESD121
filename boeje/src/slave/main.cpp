@@ -41,7 +41,6 @@ void setup() {
     Serial.println("setting dummy values for internal vaiables");
     biggestAccel = 987;
     batteryVoltage = 603;
-    lampCycles = 1200;
     sprintf(geohash, "12345678901");
 
     Serial.println(biggestAccel);
@@ -52,6 +51,8 @@ void setup() {
     //split16bit(0xaaff, geohash, 0);
 
     voltageSetup(10, 2);
+
+    currentSetup();
 
     int err = beginRadio();
 
@@ -72,6 +73,7 @@ void loop() {
     case VARDMP:     //send back stored values
         packValues(biggestAccel, batteryVoltage, lampCycles, geohash);
         sendMsg(sender, dataPck, dataLen);
+        lampCycles = 0; //Resettes efter værdien er sendt afsted
         break;
 
     case RESEND:     //resend last message
