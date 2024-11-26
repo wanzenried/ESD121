@@ -13,7 +13,7 @@
 
 //defines:
 
-
+//#define SERIALDEBUG
 
 //function prototypes:
 
@@ -47,12 +47,14 @@ void setup() {
     lon = 23.456789;
     sprintf(geohash, "%d,%d", int(lat), int(lon));
 
+    #ifdef SERIALDEBUG
     Serial.println(biggestAccel);
     Serial.println(batteryVoltage);
     Serial.println(lampCycles);
     Serial.println(lat);
     Serial.println(lon);
     Serial.println(geohash);
+    #endif
 
     //split16bit(0xaaff, geohash, 0);
 
@@ -66,8 +68,15 @@ void setup() {
 
     if (err != 0)
     {
+        #ifdef SERIALDEBUG
         Serial.print("Could not configure radio, err: ");
         Serial.println(err);
+        #endif
+
+        #ifndef SERIALDEBUG
+        pinMode(LED_BUILTIN, OUTPUT);
+        digitalWrite(LED_BUILTIN, HIGH);
+        #endif
 
         while (true) {} // stop other code from running if we receive an error
     }
@@ -76,6 +85,7 @@ void setup() {
 void loop() {
 
     // If there is communication, handle it and send back a response if neccesary
+
     switch (recieveCommand(&sender))
     {
     case VARDMP:     //send back stored values
@@ -117,12 +127,14 @@ void loop() {
 
 void packValues(uint16_t biggestAccel, uint16_t batteryVoltage, uint16_t lampCycles, char *geohash)
 {
+    #ifdef SERIALDEBUG
     Serial.println(biggestAccel);
     Serial.println(batteryVoltage);
     Serial.println(lampCycles);
     Serial.println(lat);
     Serial.println(lon);
     Serial.println(geohash);
+    #endif
 
     //char data[18]; //two bytes for each number, and 12 for the geohash
     dataLen = 0;
