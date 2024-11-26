@@ -53,6 +53,8 @@ void setup() {
 
     voltageSetup(10, 2);
 
+    currentSetup();
+
     int err = beginRadio();
 
     if (err != 0)
