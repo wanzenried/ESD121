@@ -60,6 +60,8 @@ void setup() {
 
     currentSetup();
 
+    gpsSetup();
+    
     int err = beginRadio();
 
     if (err != 0)

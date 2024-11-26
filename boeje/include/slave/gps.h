@@ -9,3 +9,4 @@ int nmeaparser(char *nmeasat, char *nmeaarr[]);
 bool getkoordinater(char *ting[], char **latitude, char **longitude, char **nord, char **oest);
 void nmeaprinter(char *nmeasat, float *latOuput, float *lonOutput);
 void getnmeasat(float *latOutput, float *lonOutput);
+void gpsSetup();
