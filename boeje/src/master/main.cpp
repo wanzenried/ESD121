@@ -56,10 +56,25 @@ void loop() {
         uint8_t nId = Serial.parseInt();
         sLen = Serial.readBytesUntil('\n', sInput, 45);
         sInput[sLen] = '\0';
+
+        //Serial.println((char)sInput);
         
         sendMsg(nId, sInput, sLen);
 
     }
+
+    while (radio.available() > 0)
+    {
+        byte in = radio.read();
+        Serial.print(in, HEX);
+        Serial.print(" ");
+        if (in == ']')
+        {
+            Serial.println("");
+        }
+
+    }
+    
     
 }
 
