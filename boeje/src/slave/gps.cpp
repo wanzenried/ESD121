@@ -4,18 +4,16 @@
 
 // Definere variabler vi skal bruge
 
-const uint8_t gpsRXpin = 4;
-const uint8_t gpsTXpin = 5;
 
 float laengdegrad[50];
 float breddegrad[50];
 int taeller = 0;
 
-SoftwareSerial gps(gpsRXpin, gpsTXpin);
+
 // Omregner nmea format koordinat til decimal grader, da det er lettere at forstå for mennesker
 
 void gpsSetup(){
-    gps.begin(9600);
+    Serial.begin(9600);
 }
 
 void updateGps(float *latOutput, float *lonOutput)
@@ -159,8 +157,8 @@ void getnmeasat(float *latOutput, float *lonOutput) {
     static char nmea[100]; 
     static size_t tjekarray = 0;
 
-    while (gps.available() > 0) {
-        char c = gps.read(); 
+    while (Serial.available() > 0) {
+        char c = Serial.read(); 
 
         if (tjekarray < sizeof(nmea) - 1) {
 
