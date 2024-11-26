@@ -33,6 +33,8 @@ const uint8_t ID = 1; //this device id
 uint16_t biggestAccel = 0;      // biggest acceleration recorded since last transmission (should contain the length of the acceleration vector)
 uint16_t batteryVoltage = 0;    //battery voltage, stored as a number between 0-1023, same as analogread output
 uint16_t lampCycles = 0;        //count of times we've seen the lamp turn on and off since last transmission
+float lat = 0.0;
+float lon = 0.0;
 char geohash[12];               //todo: geohash of our location this will be hardcoded until we implement the geohash function
 
 
@@ -87,7 +89,7 @@ void loop() {
     //!Write functions here
 
     //Get Gps data
-    updateGps(geohash);
+    updateGps(&lat, &lon);
 
     //Get battery voltage
     updateVoltage(&batteryVoltage);
