@@ -45,7 +45,7 @@ void setup() {
     batteryVoltage = 603;
     lat = 12.345678;
     lon = 23.456789;
-    sprintf(geohash, "12345678901");
+    sprintf(geohash, "%d,%d", int(lat), int(lon));
 
     Serial.println(biggestAccel);
     Serial.println(batteryVoltage);
@@ -77,6 +77,7 @@ void loop() {
     switch (recieveCommand(&sender))
     {
     case VARDMP:     //send back stored values
+        sprintf(geohash, "%d,%d", int(lat), int(lon));
         packValues(biggestAccel, batteryVoltage, lampCycles, geohash);
         sendMsg(sender, dataPck, dataLen);
         lampCycles = 0; //Resettes efter værdien er sendt afsted
