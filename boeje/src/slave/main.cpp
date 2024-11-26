@@ -118,6 +118,8 @@ void packValues(uint16_t biggestAccel, uint16_t batteryVoltage, uint16_t lampCyc
     Serial.println(biggestAccel);
     Serial.println(batteryVoltage);
     Serial.println(lampCycles);
+    Serial.println(lat);
+    Serial.println(lon);
     Serial.println(geohash);
 
     //char data[18]; //two bytes for each number, and 12 for the geohash
