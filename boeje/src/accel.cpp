@@ -31,7 +31,7 @@ void filterGravity(int_fast16_t rawAx, int16_t rawAy, int16_t rawAz);
 float gravityX = 0;
 float gravityY = 0;
 float gravityZ = 0;
-const float filterkonstant = 0.8; //Lavpasfilter-konstant
+const float filterconstant = 0.8; //Lavpasfilter-konstant
 const float scaleFactor = 9.81 / 16384.0; // Konvertering til 2g-kraft
 
 
@@ -158,6 +158,7 @@ if (accelVector.magnitude < 0.01)
 }
 delay(100);
 
+// Function for calculating the accelerationvector
 vector calculateVectorAcc(int_fast16_t rawAx, int16_t rawAy, int16_t rawAz);
 {
 
@@ -172,10 +173,19 @@ float magnitude = sqrt(ax*ax+ay*ay+az*az);
 //return vector
 return {ax, ay, az, magnitude};
 
-
-
-
 }
+
+// Function to filtrate away the gravity contribute with lowpass
+void filterGravity(int_fast16_t rawAx, int16_t rawAy, int16_t rawAz);
+// Convert raw to m/s^2
+float ax = rawAx * scaleFactor;
+float ay = rawAy * scaleFactor;
+float az = rawAz * scaleFactor;
+
+//Lowpassfilter for the gravity estimat
+gravityX = filterconstant * gravityX + (1 - filterconstant)*ax;
+gravityY = filterconstant * gravityY + (1 - filterconstant)*ay;
+gravityZ = filterconstant * gravityZ + (1 - filterconstant)*az;
 
 /*
     // Get gyroscope data
