@@ -127,10 +127,10 @@ void loop() {
     int16_t rawAy = accelY();
     int16_t rawAz = accelZ();
 
-    Serial.print("Raw values:<");
-    Serial.print(rawAx, HEX); Serial.print(", ");
-    Serial.print(rawAy, HEX); Serial.print(", ");
-    Serial.print(rawAz, HEX); Serial.println(">");
+    //Serial.print("Raw values:<");
+    //Serial.print(rawAx, HEX); Serial.print(", ");
+    //Serial.print(rawAy, HEX); Serial.print(", ");
+    //Serial.print(rawAz, HEX); Serial.println(">");
 
     //Gravity-filter
     filterGravity(rawAx,rawAy, rawAz);
