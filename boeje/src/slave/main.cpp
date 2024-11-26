@@ -20,8 +20,9 @@
 
 //function prototypes:
 
-void packValues(uint16_t biggestAccel, uint16_t batteryVoltage, uint16_t lampCycles, char *geohash);
+void packValues(uint16_t biggestAccel, uint16_t batteryVoltage, uint16_t lampCycles, float lat, float lon);
 void split16bit(uint16_t n, char *buffer, uint8_t *index);
+void splitFloat(float f, char *buffer, uint8_t *index);
 
 //global variables:
 
@@ -30,10 +31,9 @@ uint16_t batteryVoltage = 0;    //battery voltage, stored as a number between 0-
 uint16_t lampCycles = 0;        //count of times we've seen the lamp turn on and off since last transmission
 float lat = 0.0;
 float lon = 0.0;
-char geohash[12];               //todo: geohash of our location this will be hardcoded until we implement the geohash function
 
 uint8_t sender = 0;
-char dataPck[18];
+char dataPck[20];               //2 bytes for each of accel, voltage and cycles, 4 bytes for each of lat and lon. this is the minimum, so just a bit more to be sure
 uint8_t dataLen = 0;
 
 
@@ -44,13 +44,14 @@ void setup() {
     // start serial communication with pc
     Serial.begin(9600);
 
+
+
     Serial.println("setting dummy values for internal vaiables");
     #endif
     biggestAccel = 987;
     batteryVoltage = 603;
     lat = 12.345678;
     lon = 23.456789;
-    sprintf(geohash, "%d,%d", int(lat), int(lon));
 
     #ifdef SERIALDEBUG
     Serial.println(biggestAccel);
@@ -58,7 +59,6 @@ void setup() {
     Serial.println(lampCycles);
     Serial.println(lat);
     Serial.println(lon);
-    Serial.println(geohash);
     #endif
 
     //split16bit(0xaaff, geohash, 0);
@@ -96,8 +96,7 @@ void loop() {
     switch (recieveCommand(&sender))
     {
     case VARDMP:     //send back stored values
-        sprintf(geohash, "%d,%d", int(lat), int(lon));
-        packValues(biggestAccel, batteryVoltage, lampCycles, geohash);
+        packValues(biggestAccel, batteryVoltage, lampCycles, lat, lon);
         sendMsg(sender, dataPck, dataLen);
         lampCycles = 0; //Resettes efter værdien er sendt afsted
         break;
@@ -134,7 +133,7 @@ void loop() {
 }
 
 
-void packValues(uint16_t biggestAccel, uint16_t batteryVoltage, uint16_t lampCycles, char *geohash)
+void packValues(uint16_t biggestAccel, uint16_t batteryVoltage, uint16_t lampCycles, float lat, float lon)
 {
     #ifdef SERIALDEBUG
     Serial.println(biggestAccel);
@@ -142,7 +141,6 @@ void packValues(uint16_t biggestAccel, uint16_t batteryVoltage, uint16_t lampCyc
     Serial.println(lampCycles);
     Serial.println(lat);
     Serial.println(lon);
-    Serial.println(geohash);
     #endif
 
     //char data[18]; //two bytes for each number, and 12 for the geohash
@@ -151,8 +149,9 @@ void packValues(uint16_t biggestAccel, uint16_t batteryVoltage, uint16_t lampCyc
     split16bit(biggestAccel, dataPck, &dataLen);
     split16bit(batteryVoltage, dataPck, &dataLen);
     split16bit(lampCycles, dataPck, &dataLen);
-    strcpy(dataPck+dataLen, geohash);
-    dataLen += strlen(geohash);
+    splitFloat(lat, dataPck, &dataLen);
+    splitFloat(lon, dataPck, &dataLen);
+
 }
 
 void split16bit(uint16_t n, char *buffer, uint8_t *index)
@@ -162,4 +161,24 @@ void split16bit(uint16_t n, char *buffer, uint8_t *index)
     buffer[*index] = (n>>8) & 0xFF;
     *index +=1;
     return;
+}
+
+void splitFloat(float f, char *buffer, uint8_t *index)
+{
+    
+    union {
+        float floatval;
+        byte temparray[4];
+    } u;
+
+    u.floatval = f;
+
+    for (size_t i = 0; i < 4; i++)
+    {
+        buffer[*index] = u.temparray[i];
+        *index +=1;
+    }
+    
+    
+    
 }
