@@ -37,10 +37,12 @@ uint8_t dataLen = 0;
 
 void setup() {
 
+    #ifdef SERIALDEBUG
     // start serial communication with pc
     Serial.begin(9600);
 
     Serial.println("setting dummy values for internal vaiables");
+    #endif
     biggestAccel = 987;
     batteryVoltage = 603;
     lat = 12.345678;
