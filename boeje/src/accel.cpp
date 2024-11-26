@@ -10,13 +10,12 @@
 #define PWR_MGMT_1 0x6B
 #define PWR_MGMT_2 0x6C
 
-struct vector{
-
+typedef struct vector{
 float x;
 float y;
 float z;
 float magnitude;
-}
+}vector;
 
 void mpuSetup();
 int16_t accelX();
@@ -39,72 +38,70 @@ const float scaleFactor = 9.81 / 16384.0; // Konvertering til 2g-kraft
 
 void mpuSetup()
 {
-writeRegister(PWR_MGMT_1, 0x80);
-  delay(200);
-  readRegister(PWR_MGMT_1);
-  
+    writeRegister(PWR_MGMT_1, 0x80);
+    delay(200);
+    readRegister(PWR_MGMT_1);
+    
 
-  writeRegister(PWR_MGMT_1, 0b00001000);
-  delay(10);
-  readRegister(PWR_MGMT_1);
+    writeRegister(PWR_MGMT_1, 0b00001000);
+    delay(10);
+    readRegister(PWR_MGMT_1);
 
- writeRegister(PWR_MGMT_2, 0b00000111);
- delay(10 );
- readRegister(PWR_MGMT_2);
-
+    writeRegister(PWR_MGMT_2, 0b00000111);
+    delay(10 );
+    readRegister(PWR_MGMT_2);
 }
 
 
 void writeRegister(uint8_t reg, uint8_t value)
 {
-Serial.print("writing value:");
-Serial.print(value, HEX);
-Serial.print("into register:");
-Serial.println(reg, HEX);
-Wire.beginTransmission(MPU6050_ADDR);
-Wire.write(reg);
-Wire.write(value);
-Wire.endTransmission(true);
-
+    Serial.print("writing value:");
+    Serial.print(value, HEX);
+    Serial.print("into register:");
+    Serial.println(reg, HEX);
+    Wire.beginTransmission(MPU6050_ADDR);
+    Wire.write(reg);
+    Wire.write(value);
+    Wire.endTransmission(true);
 }
 
 int8_t readRegister(uint8_t reg)
 {
-Wire.beginTransmission(MPU6050_ADDR);
-Wire.write(reg);
-Wire.endTransmission(false);
-Wire.requestFrom(MPU6050_ADDR, 1, true);
-uint8_t value = Wire.read();
-Serial.print("read value:");
-Serial.println(value,HEX);
-return value;
+    Wire.beginTransmission(MPU6050_ADDR);
+    Wire.write(reg);
+    Wire.endTransmission(false);
+    Wire.requestFrom(MPU6050_ADDR, 1, true);
+    uint8_t value = Wire.read();
+    Serial.print("read value:");
+    Serial.println(value,HEX);
+    return value;
 }
 
 int16_t accelX()
 {
-uint8_t high_byte = readRegister(0x3B);
-uint8_t low_byte = readRegister(0x3C);
+    uint8_t high_byte = readRegister(0x3B);
+    uint8_t low_byte = readRegister(0x3C);
 
-uint16_t combined_value = (high_byte<<8) + low_byte;
-return combined_value;
+    uint16_t combined_value = (high_byte<<8) + low_byte;
+    return combined_value;
 }
 
 int16_t accelY()
 {
-uint8_t high_byte = readRegister(0x3d);
-uint8_t low_byte = readRegister(0x3e);
+    uint8_t high_byte = readRegister(0x3d);
+    uint8_t low_byte = readRegister(0x3e);
 
-uint16_t combined_value = (high_byte<<8) + low_byte;
-return combined_value;
+    uint16_t combined_value = (high_byte<<8) + low_byte;
+    return combined_value;
 }
 
 int16_t accelZ()
 {
-uint8_t high_byte =readRegister(0x3F);
-uint8_t low_byte = readRegister(0x40);
+    uint8_t high_byte =readRegister(0x3F);
+    uint8_t low_byte = readRegister(0x40);
 
-uint16_t combined_value = (high_byte<<8) + low_byte;
-return combined_value;
+    uint16_t combined_value = (high_byte<<8) + low_byte;
+    return combined_value;
 }
 
 void setup() {
@@ -113,7 +110,7 @@ void setup() {
 
     mpuSetup();
 
-/*
+    /*
     // Initialize MPU6050
     mpu.initialize();
 
@@ -130,69 +127,55 @@ void loop() {
     int16_t rawAy = accelY();
     int16_t rawAz = accelZ();
 
-Serial.print("Raw values:<");
-Serial.print(rawAx, HEX); Serial.print(", ");
-Serial.print(rawAy, HEX); Serial.print(", ");
-Serial.print(rawAz, HEX); Serial.println(">");
+    Serial.print("Raw values:<");
+    Serial.print(rawAx, HEX); Serial.print(", ");
+    Serial.print(rawAy, HEX); Serial.print(", ");
+    Serial.print(rawAz, HEX); Serial.println(">");
 
-//Gravity-filter
-filterGravity(rawAx,rawAy, rawAz);
+    //Gravity-filter
+    filterGravity(rawAx,rawAy, rawAz);
 
-//Calculate vectoracceleration
-vector accelVector = calculateVectorAcc(rawAx, rawAy, rawAz);
+    //Calculate vectoracceleration
+    vector accelVector = calculateVectorAcc(rawAx, rawAy, rawAz);
 
-//print values of the accelvector
-Serial.print("Acceleration vector:<");
-Serial.print(accelVector.x, 2); Serial.print(", ");
-Serial.print(accelVector.y, 2); Serial.print(", ");
-Serial.print(accelVector.z, 2); Serial.print("> m/s^2");
+    //print values of the accelvector
+    Serial.print("Acceleration vector:<");
+    Serial.print(accelVector.x, 2); Serial.print(", ");
+    Serial.print(accelVector.y, 2); Serial.print(", ");
+    Serial.print(accelVector.z, 2); Serial.print("> m/s^2");
 
-//print vector length
-Serial.print(", Magnitude: ");
-Serial.print(accelVector.magnitude, 2);
-Serial.println("m/s^2");
+    //print vector length
+    Serial.print(", Magnitude: ");
+    Serial.print(accelVector.magnitude, 2);
+    Serial.println("m/s^2");
 
-if (accelVector.magnitude < 0.01)
-{
-    mpuSetup();
-}
-delay(100);
-
-// Function for calculating the accelerationvector
-vector calculateVectorAcc(int_fast16_t rawAx, int16_t rawAy, int16_t rawAz);
-{
-
-// remove the gravity contribute
-float ax = rawAx * scaleFactor - gravityX;
-float ay = rawAy * scaleFactor - gravityY;
-float az = rawAz * scaleFactor - gravityZ;
-
-//Calculate magnitude
-float magnitude = sqrt(ax*ax+ay*ay+az*az);
-
-//return vector
-return {ax, ay, az, magnitude};
+    if (accelVector.magnitude < 0.01)
+    {
+        mpuSetup();
+    }
+    delay(100);
 
 }
 
 // Function to filtrate away the gravity contribute with lowpass
-void filterGravity(int_fast16_t rawAx, int16_t rawAy, int16_t rawAz);
-// Convert raw to m/s^2
-float ax = rawAx * scaleFactor;
-float ay = rawAy * scaleFactor;
-float az = rawAz * scaleFactor;
+void filterGravity(int_fast16_t rawAx, int16_t rawAy, int16_t rawAz)
+{
+    // Convert raw to m/s^2
+    float ax = rawAx * scaleFactor;
+    float ay = rawAy * scaleFactor;
+    float az = rawAz * scaleFactor;
 
-//Lowpassfilter for the gravity estimat
-gravityX = filterconstant * gravityX + (1 - filterconstant)*ax;
-gravityY = filterconstant * gravityY + (1 - filterconstant)*ay;
-gravityZ = filterconstant * gravityZ + (1 - filterconstant)*az;
+    //Lowpassfilter for the gravity estimat
+    gravityX = filterconstant * gravityX + (1 - filterconstant)*ax;
+    gravityY = filterconstant * gravityY + (1 - filterconstant)*ay;
+    gravityZ = filterconstant * gravityZ + (1 - filterconstant)*az;
 
-/*
+    /*
     // Get gyroscope data
     int16_t gx = mpu.getRotationX();
     int16_t gy = mpu.getRotationY();
     int16_t gz = mpu.getRotationZ();
-*/
+    */ 
     //mpu.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
 
     /*float gyroX = gx / 131.0;
@@ -200,5 +183,24 @@ gravityZ = filterconstant * gravityZ + (1 - filterconstant)*az;
     float gyroZ = gz / 131.0;*/
     
     //print_acceleration_data(&ax, &ay, &az);
+
+}
+
+// Function for calculating the accelerationvector
+vector calculateVectorAcc(int_fast16_t rawAx, int16_t rawAy, int16_t rawAz)
+{
+
+    // remove the gravity contribute
+    float ax = rawAx * scaleFactor - gravityX;
+    float ay = rawAy * scaleFactor - gravityY;
+    float az = rawAz * scaleFactor - gravityZ;
+
+    //Calculate magnitude
+    float magnitude = sqrt(ax*ax+ay*ay+az*az);
+
+    vector v = {ax, ay, az, magnitude};
+
+    //return vector
+    return v;
 
 }
