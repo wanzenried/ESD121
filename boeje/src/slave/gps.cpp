@@ -1,12 +1,12 @@
 #include <slave/gps.h>
-#include <stdlib.h>
-#include <string.h>
-#include <Arduino.h>
-#include <SoftwareSerial.h>
 
-#define gpsRXpin 6
-#define gpsTXpin 7
+
+
 // Definere variabler vi skal bruge
+
+const uint8_t gpsRXpin = 6;
+const uint8_t gpsTXpin = 7;
+
 float laengdegrad[50];
 float breddegrad[50];
 int taeller = 0;
@@ -115,7 +115,7 @@ bool getkoordinater(char *ting[], char **latitude, char **longitude, char **nord
     taeller = 0; 
 }*/
 //Samlede funktion der caller de fleste funktioner, for at printe koordinater + gennemsnit efter 50 samples eller når data bliver utilgængeligt
-void nmeaprinter(char *nmeasat, float *latOuput, float *lonOutput) {
+void nmeaprinter(char *nmeasat, float *latOutput, float *lonOutput) {
 
     if (strncmp(nmeasat, "$GPGLL", 6) == 0) { 
 
@@ -130,8 +130,8 @@ void nmeaprinter(char *nmeasat, float *latOuput, float *lonOutput) {
 
         if (getkoordinater(ting, &latitude, &longitude, &nord, &oest)) {
 
-            float latOutput = omregngrader(latitude, nord[0]);
-            float lonOutput = omregngrader(longitude, oest[0]);
+            *latOutput = omregngrader(latitude, nord[0]);
+            *lonOutput = omregngrader(longitude, oest[0]);
 
 
             /*gemkoordinateriarray(latOutput, lonOutput);
