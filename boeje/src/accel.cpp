@@ -72,8 +72,8 @@ int8_t readRegister(uint8_t reg)
     Wire.endTransmission(false);
     Wire.requestFrom(MPU6050_ADDR, 1, true);
     uint8_t value = Wire.read();
-    Serial.print("read value:");
-    Serial.println(value,HEX);
+   //Serial.print("read value:");
+   //Serial.println(value,HEX);
     return value;
 }
 
@@ -153,7 +153,7 @@ void loop() {
     {
         mpuSetup();
     }
-    delay(100);
+    delay(200);
 
 }
 
