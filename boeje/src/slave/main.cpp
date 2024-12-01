@@ -9,7 +9,7 @@
 #include <slave/radio.h>
 
 //we can only use the gps module if serialdebug is disabled
-#define SERIALDEBUG
+//#define SERIALDEBUG
 #ifndef SERIALDEBUG
 #include <slave/gps.h>
 #endif
