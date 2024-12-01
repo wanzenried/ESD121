@@ -83,17 +83,19 @@ void loop() {
             break;
         }
         rLen = 0;
-        int transmissionLen = radio.read();
+        delay(5);
+        uint8_t transmissionLen = radio.read();
+        Serial.println(transmissionLen, HEX);
 
         uint8_t recipient = radio.read();
         transmissionLen--;
         Serial.print("transmission intended for: ");
-        Serial.println(recipient);
+        Serial.println(recipient, HEX);
 
         uint8_t sender = radio.read();
         transmissionLen--;
         Serial.print("transmission sent from: ");
-        Serial.println(sender);
+        Serial.println(sender, HEX);
 
         rLen = radio.readBytes(rInput, transmissionLen);
 
