@@ -9,7 +9,7 @@
 #include <slave/radio.h>
 
 //we can only use the gps module if serialdebug is disabled
-//#define SERIALDEBUG
+#define SERIALDEBUG
 #ifndef SERIALDEBUG
 #include <slave/gps.h>
 #endif
@@ -56,11 +56,11 @@ void setup() {
     data.lon = 23.456789;
 
     #ifdef SERIALDEBUG
-    Serial.println(biggestAccel);
-    Serial.println(batteryVoltage);
-    Serial.println(lampCycles);
-    Serial.println(lat);
-    Serial.println(lon);
+    Serial.println(data.biggestAccel);
+    Serial.println(data.batteryVoltage);
+    Serial.println(data.lampCycles);
+    Serial.println(data.lat);
+    Serial.println(data.lon);
     #endif
 
     //split16bit(0xaaff, geohash, 0);
@@ -138,11 +138,11 @@ void loop() {
 void packValues(packedData *data, char *buffer)
 {
     #ifdef SERIALDEBUG
-    Serial.println(*data.biggestAccel);
-    Serial.println(*data.batteryVoltage);
-    Serial.println(*data.lampCycles);
-    Serial.println(*data.lat);
-    Serial.println(*data.lon);
+    Serial.println(data->biggestAccel);
+    Serial.println(data->batteryVoltage);
+    Serial.println(data->lampCycles);
+    Serial.println(data->lat);
+    Serial.println(data->lon);
     #endif
 
     dataLen = sizeof(packedData);
