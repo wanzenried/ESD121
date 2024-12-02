@@ -3,13 +3,14 @@
 #define MPU6050_ADDR 0x68
 #define PWR_MGMT_1 0x6B
 #define PWR_MGMT_2 0x6C
+#define ACCEL_CONFIG 0x1C
 
 // Variabler til vektor
 float gravityX = 0;
 float gravityY = 0;
 float gravityZ = 0;
 const float filterconstant = 0.8; //Lavpasfilter-konstant
-const float scaleFactor = 9.81 / 16384.0; // Konvertering til 2g-kraft
+const float scaleFactor = 9.81 / 4096; // Konvertering til 2g-kraft
 
 void accelSetup()
 {
@@ -27,6 +28,9 @@ void accelSetup()
     writeRegister(PWR_MGMT_2, 0b00000111);
     delay(10);
     //readRegister(PWR_MGMT_2);
+
+    //  configure accelrerometer to +-8G sensitivity
+    writeRegister(ACCEL_CONFIG, 0b00010000);
 }
 
 void updateAccel(float *output)

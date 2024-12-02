@@ -50,8 +50,7 @@ void setup() {
 
     Serial.println("setting dummy values for internal vaiables");
     #endif
-    data.biggestAccel = 987;
-    data.batteryVoltage = 603;
+
     data.lat = 12.345678;
     data.lon = 23.456789;
 
