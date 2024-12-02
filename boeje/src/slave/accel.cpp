@@ -76,7 +76,7 @@ int16_t accelX()
     int8_t high_byte = readRegister(0x3B);
     int8_t low_byte = readRegister(0x3C);
 
-    int16_t combined_value = (high_byte<<8) + low_byte;
+    int16_t combined_value = int16_t((high_byte<<8) | low_byte);
     return combined_value;
 }
 
@@ -85,7 +85,7 @@ int16_t accelY()
     int8_t high_byte = readRegister(0x3d);
     int8_t low_byte = readRegister(0x3e);
 
-    int16_t combined_value = (high_byte<<8) + low_byte;
+    int16_t combined_value = int16_t((high_byte<<8) | low_byte);
     return combined_value;
 }
 
@@ -94,7 +94,7 @@ int16_t accelZ()
     int8_t high_byte =readRegister(0x3F);
     int8_t low_byte = readRegister(0x40);
 
-    int16_t combined_value = (high_byte<<8) + low_byte;
+    int16_t combined_value = int16_t((high_byte<<8) | low_byte);
     return combined_value;
 }
 
