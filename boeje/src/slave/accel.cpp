@@ -69,28 +69,28 @@ int8_t readRegister(uint8_t reg)
 
 int16_t accelX()
 {
-    uint8_t high_byte = readRegister(0x3B);
-    uint8_t low_byte = readRegister(0x3C);
+    int8_t high_byte = readRegister(0x3B);
+    int8_t low_byte = readRegister(0x3C);
 
-    uint16_t combined_value = (high_byte<<8) + low_byte;
+    int16_t combined_value = (high_byte<<8) + low_byte;
     return combined_value;
 }
 
 int16_t accelY()
 {
-    uint8_t high_byte = readRegister(0x3d);
-    uint8_t low_byte = readRegister(0x3e);
+    int8_t high_byte = readRegister(0x3d);
+    int8_t low_byte = readRegister(0x3e);
 
-    uint16_t combined_value = (high_byte<<8) + low_byte;
+    int16_t combined_value = (high_byte<<8) + low_byte;
     return combined_value;
 }
 
 int16_t accelZ()
 {
-    uint8_t high_byte =readRegister(0x3F);
-    uint8_t low_byte = readRegister(0x40);
+    int8_t high_byte =readRegister(0x3F);
+    int8_t low_byte = readRegister(0x40);
 
-    uint16_t combined_value = (high_byte<<8) + low_byte;
+    int16_t combined_value = (high_byte<<8) + low_byte;
     return combined_value;
 }
 
