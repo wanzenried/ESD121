@@ -35,9 +35,22 @@ void accelSetup()
 
 void updateAccel(float *output)
 {
-    int16_t rawAx = accelX();
-    int16_t rawAy = accelY();
-    int16_t rawAz = accelZ();
+    int32_t rawAx = 0;
+    int32_t rawAy = 0;
+    int32_t rawAz = 0;
+
+    int count = 10;
+    for (int i = 0; i < count; i++)
+    {
+        rawAx += accelX();
+        rawAy += accelY();
+        rawAz += accelZ();
+        delayMicroseconds(1100);
+    }
+
+    rawAx = rawAx/count;
+    rawAy = rawAy/count;
+    rawAz = rawAz/count;
 
     filterGravity(rawAx,rawAy, rawAz);
 
