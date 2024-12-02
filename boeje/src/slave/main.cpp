@@ -69,6 +69,8 @@ void setup() {
 
     currentSetup();
 
+    accelSetup();
+
     #ifndef SERIALDEBUG
     gpsSetup();
     #endif
