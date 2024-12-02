@@ -63,6 +63,9 @@ void setup() {
     }
 }
 
+unsigned long lastSend = 0;
+unsigned long sendDelay = 1000;
+
 void loop() {
     if (Serial.available() > 0)
     {
@@ -75,6 +78,13 @@ void loop() {
         sendMsg(nId, sInput, sLen);
 
     }
+
+    if (millis() - sendDelay > lastSend)
+    {
+        byte msg[] = "vd";
+        sendMsg(1, msg, 2);
+    }
+    
 
     while (radio.available() > 0)
     {
