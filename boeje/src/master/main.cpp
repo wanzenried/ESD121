@@ -64,7 +64,7 @@ void setup() {
 }
 
 unsigned long lastSend = 0;
-unsigned long sendDelay = 1000;
+unsigned long sendDelay = 3000;
 
 void loop() {
     if (Serial.available() > 0)
@@ -81,8 +81,10 @@ void loop() {
 
     if (millis() - sendDelay > lastSend)
     {
+        Serial.println("sending message");
         byte msg[] = "vd";
         sendMsg(1, msg, 2);
+        lastSend = millis();
     }
     
 
