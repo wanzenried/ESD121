@@ -98,6 +98,7 @@ void loop() {
         Serial.println(sender, HEX);
 
         rLen = radio.readBytes(rInput, transmissionLen);
+        delay(5);
 
         if (radio.read() == ']')
         {
