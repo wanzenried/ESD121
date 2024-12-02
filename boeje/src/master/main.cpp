@@ -15,7 +15,7 @@
 
 typedef struct packedData
 {
-    uint16_t biggestAccel;      // biggest acceleration recorded since last transmission (should contain the length of the acceleration vector)
+    float biggestAccel;      // biggest acceleration recorded since last transmission (should contain the length of the acceleration vector)
     uint16_t batteryVoltage;    // battery voltage, stored as a number between 0-1023, same as analogread output
     uint16_t lampCycles;        // count of times we've seen the lamp turn on and off since last transmission
     float lat;
@@ -63,6 +63,9 @@ void setup() {
     }
 }
 
+unsigned long lastSend = 0;
+unsigned long sendDelay = 3000;
+
 void loop() {
     if (Serial.available() > 0)
     {
@@ -75,6 +78,15 @@ void loop() {
         sendMsg(nId, sInput, sLen);
 
     }
+
+    if (millis() - sendDelay > lastSend)
+    {
+        Serial.println("sending message");
+        byte msg[] = "vd";
+        sendMsg(1, msg, 2);
+        lastSend = millis();
+    }
+    
 
     while (radio.available() > 0)
     {
@@ -98,6 +110,7 @@ void loop() {
         Serial.println(sender, HEX);
 
         rLen = radio.readBytes(rInput, transmissionLen);
+        delay(5);
 
         if (radio.read() == ']')
         {

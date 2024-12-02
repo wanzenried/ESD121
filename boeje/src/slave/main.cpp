@@ -18,7 +18,7 @@
 
 typedef struct packedData
 {
-    uint16_t biggestAccel;      // biggest acceleration recorded since last transmission (should contain the length of the acceleration vector)
+    float biggestAccel;      // biggest acceleration recorded since last transmission (should contain the length of the acceleration vector)
     uint16_t batteryVoltage;    // battery voltage, stored as a number between 0-1023, same as analogread output
     uint16_t lampCycles;        // count of times we've seen the lamp turn on and off since last transmission
     float lat;
@@ -50,8 +50,7 @@ void setup() {
 
     Serial.println("setting dummy values for internal vaiables");
     #endif
-    data.biggestAccel = 987;
-    data.batteryVoltage = 603;
+
     data.lat = 12.345678;
     data.lon = 23.456789;
 
@@ -68,6 +67,8 @@ void setup() {
     voltageSetup(10, 2);
 
     currentSetup();
+
+    accelSetup();
 
     #ifndef SERIALDEBUG
     gpsSetup();
@@ -101,6 +102,7 @@ void loop() {
         packValues(&data, dataPck);
         sendMsg(sender, dataPck, dataLen);
         data.lampCycles = 0; //Resettes efter værdien er sendt afsted
+        data.biggestAccel = 0.0;
         break;
 
     case RESEND:     //resend last message
