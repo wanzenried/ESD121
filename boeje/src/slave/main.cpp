@@ -3,50 +3,65 @@
 
 //our libraries / includes
 #include <apc220.h>
-
 #include <slave/accel.h>
-#include <slave/gps.h>
 #include <slave/current.h>
 #include <slave/voltage.h>
 #include <slave/radio.h>
 
+//we can only use the gps module if serialdebug is disabled
+//#define SERIALDEBUG
+#ifndef SERIALDEBUG
+#include <slave/gps.h>
+#endif
 
 //defines:
 
-
+typedef struct packedData
+{
+    uint16_t biggestAccel;      // biggest acceleration recorded since last transmission (should contain the length of the acceleration vector)
+    uint16_t batteryVoltage;    // battery voltage, stored as a number between 0-1023, same as analogread output
+    uint16_t lampCycles;        // count of times we've seen the lamp turn on and off since last transmission
+    float lat;
+    float lon;
+} packedData;
 
 //function prototypes:
 
-void packValues(uint16_t biggestAccel, uint16_t batteryVoltage, uint16_t lampCycles, char *geohash);
-void split16bit(uint16_t n, char *buffer, uint8_t *index);
+void packValues(packedData *data, char *buffer);
 
 //global variables:
 
-uint16_t biggestAccel = 0;      // biggest acceleration recorded since last transmission (should contain the length of the acceleration vector)
-uint16_t batteryVoltage = 0;    //battery voltage, stored as a number between 0-1023, same as analogread output
-uint16_t lampCycles = 0;        //count of times we've seen the lamp turn on and off since last transmission
-char geohash[12];               //todo: geohash of our location this will be hardcoded until we implement the geohash function
+packedData data = {0,0,0,0,0};
 
 uint8_t sender = 0;
-char dataPck[18];
+
+char dataPck[sizeof(packedData) + 6];               //2 bytes for each of accel, voltage and cycles, 4 bytes for each of lat and lon. this is the minimum, so just a bit more to be sure
 uint8_t dataLen = 0;
 
 
 
 void setup() {
 
+    #ifdef SERIALDEBUG
     // start serial communication with pc
     Serial.begin(9600);
 
-    Serial.println("setting dummy values for internal vaiables");
-    biggestAccel = 987;
-    batteryVoltage = 603;
-    sprintf(geohash, "12345678901");
 
-    Serial.println(biggestAccel);
-    Serial.println(batteryVoltage);
-    Serial.println(lampCycles);
-    Serial.println(geohash);
+
+    Serial.println("setting dummy values for internal vaiables");
+    #endif
+    data.biggestAccel = 987;
+    data.batteryVoltage = 603;
+    data.lat = 12.345678;
+    data.lon = 23.456789;
+
+    #ifdef SERIALDEBUG
+    Serial.println(data.biggestAccel);
+    Serial.println(data.batteryVoltage);
+    Serial.println(data.lampCycles);
+    Serial.println(data.lat);
+    Serial.println(data.lon);
+    #endif
 
     //split16bit(0xaaff, geohash, 0);
 
@@ -54,12 +69,23 @@ void setup() {
 
     currentSetup();
 
+    #ifndef SERIALDEBUG
+    gpsSetup();
+    #endif
+    
     int err = beginRadio();
 
     if (err != 0)
     {
+        #ifdef SERIALDEBUG
         Serial.print("Could not configure radio, err: ");
         Serial.println(err);
+        #endif
+
+        #ifndef SERIALDEBUG
+        pinMode(LED_BUILTIN, OUTPUT);
+        digitalWrite(LED_BUILTIN, HIGH);
+        #endif
 
         while (true) {} // stop other code from running if we receive an error
     }
@@ -68,12 +94,13 @@ void setup() {
 void loop() {
 
     // If there is communication, handle it and send back a response if neccesary
+
     switch (recieveCommand(&sender))
     {
     case VARDMP:     //send back stored values
-        packValues(biggestAccel, batteryVoltage, lampCycles, geohash);
+        packValues(&data, dataPck);
         sendMsg(sender, dataPck, dataLen);
-        lampCycles = 0; //Resettes efter værdien er sendt afsted
+        data.lampCycles = 0; //Resettes efter værdien er sendt afsted
         break;
 
     case RESEND:     //resend last message
@@ -90,44 +117,47 @@ void loop() {
 
     //!Write functions here
 
+    #ifndef SERIALDEBUG
     //Get Gps data
-    updateGps(geohash);
+    updateGps(&data.lat, &data.lon);
+    #endif
 
     //Get battery voltage
-    updateVoltage(&batteryVoltage);
+    updateVoltage(&data.batteryVoltage);
 
     //Meassure current
-    updateCurrent(&lampCycles);
+    updateCurrent(&data.lampCycles);
 
     //Get acceleration
-    updateAccel(&biggestAccel);
+    updateAccel(&data.biggestAccel);
     
 
 }
 
 
-void packValues(uint16_t biggestAccel, uint16_t batteryVoltage, uint16_t lampCycles, char *geohash)
+void packValues(packedData *data, char *buffer)
 {
-    Serial.println(biggestAccel);
-    Serial.println(batteryVoltage);
-    Serial.println(lampCycles);
-    Serial.println(geohash);
+    #ifdef SERIALDEBUG
+    Serial.println(data->biggestAccel);
+    Serial.println(data->batteryVoltage);
+    Serial.println(data->lampCycles);
+    Serial.println(data->lat);
+    Serial.println(data->lon);
+    #endif
 
-    //char data[18]; //two bytes for each number, and 12 for the geohash
-    dataLen = 0;
+    dataLen = sizeof(packedData);
 
-    split16bit(biggestAccel, dataPck, &dataLen);
-    split16bit(batteryVoltage, dataPck, &dataLen);
-    split16bit(lampCycles, dataPck, &dataLen);
-    strcpy(dataPck+dataLen, geohash);
-    dataLen += strlen(geohash);
-}
+    union u
+    {
+        packedData data;
+        byte byteArr[sizeof(packedData)];
+    } u;
+    
+    u.data = *data;
 
-void split16bit(uint16_t n, char *buffer, uint8_t *index)
-{
-    buffer[*index] = n & 0xFF;
-    *index +=1;
-    buffer[*index] = (n>>8) & 0xFF;
-    *index +=1;
-    return;
+    for (int i = 0; i < sizeof(packedData); i++)
+    {
+        buffer[i] = u.byteArr[i];
+    }
+
 }

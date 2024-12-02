@@ -12,7 +12,6 @@ int beginRadio()
 {
     // start and configure radio
     radio.begin(9600);
-    //Serial.println(radio.getTimeout());
     return radio.config(433000, 3, 9, 3, 0);
 }
 
@@ -43,30 +42,19 @@ cmd recieveCommand(uint8_t *senderID)
 int recieveMsg(char *buffer, uint8_t *bufferLen)
 {
 
-    Serial.println("Recieved start of transmission");
-
     int transmissionLen = radio.read();
-
-    Serial.print("Transmission is of length ");
-    Serial.println(transmissionLen);
 
     uint8_t recvId = radio.read();      //first byte of transmission is the id of the device that is supposed to recieve the message
     transmissionLen--;
 
-    Serial.print("Transmission is intended for device id: ");
-    Serial.println(recvId);
 
     if(recvId != ID)
     {
-        Serial.println("Transmission is not intended for me");
         return 1;
     }
 
 
     *bufferLen = radio.readBytes(buffer,transmissionLen);
-
-    Serial.print("bytes recieved: ");
-    Serial.println(rLen);
 
     buffer[*bufferLen] = '\0';
     
@@ -74,12 +62,10 @@ int recieveMsg(char *buffer, uint8_t *bufferLen)
 
     if (radio.read() == ']')
     {
-        Serial.println("Recieved end of transmission");
         return 0;
     }
     else
     {
-        Serial.println("Sumting wrogn");
         return 2;
     }
 }
@@ -88,9 +74,6 @@ cmd decode()
 {
     uint8_t sendId = rInput[0];
 
-    Serial.print("Sender id: ");
-    Serial.println(sendId);
-
     if(rInput[1] == 'v' && rInput[2] == 'd')
     {
         return VARDMP;
@@ -98,11 +81,6 @@ cmd decode()
     else if (rInput[1] == 'r' && rInput[2] == 's')
     {
         return RESEND;
-    }
-    else
-    {
-    Serial.print("msg: ");
-    Serial.println(rInput+1);
     }
     return NOCMD;
 
