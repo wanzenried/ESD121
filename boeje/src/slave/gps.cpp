@@ -119,8 +119,6 @@ bool getkoordinater(char *ting[], char **latitude, char **longitude, char **nord
 void nmeaprinter(char *nmeasat, float *latOutput, float *lonOutput) {
 
     if (strncmp(nmeasat, "$GPGLL", 6) == 0) { 
-
-        //Serial.println(nmeasat);
         char *ting[10];
         nmeaparser(nmeasat, ting);
 
@@ -133,22 +131,7 @@ void nmeaprinter(char *nmeasat, float *latOutput, float *lonOutput) {
 
             *latOutput = omregngrader(latitude, nord[0]);
             *lonOutput = omregngrader(longitude, oest[0]);
-
-
-            /*gemkoordinateriarray(latOutput, lonOutput);
-
-            if (taeller == 50) { 
-                printgennemsnit();
-            }*/
-
-        } /*else { 
-
-            Serial.println("Faerre end 50 samples");
-
-            if (taeller > 0) { 
-                printgennemsnit();
-            }
-        } */
+        }
     }
 }
 
