@@ -110,6 +110,12 @@ void filterGravity(int_fast16_t rawAx, int16_t rawAy, int16_t rawAz)
     gravityY = filterconstant * gravityY + (1 - filterconstant)*ay;
     gravityZ = filterconstant * gravityZ + (1 - filterconstant)*az;
 
+    gravityX = max(-9.81, min(9.81, gravityX));
+    gravityY = max(-9.81, min(9.81, gravityY));
+    gravityZ = max(-9.81, min(9.81, gravityZ));
+
+
+
 }
 
 vec3D calculateVectorAcc(int_fast16_t rawAx, int16_t rawAy, int16_t rawAz)
