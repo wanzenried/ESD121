@@ -12,7 +12,7 @@ void voltageSetup(uint8_t samples, uint8_t sDelay)
     sampleDelay = sDelay;
 }
 
-void updateVoltage(uint16_t *output)
+void updateVoltage(float *output)
 {
     uint32_t sum = 0;
 
@@ -22,6 +22,8 @@ void updateVoltage(uint16_t *output)
         delay(sampleDelay);
     }
 
-    *output = (sum / sampleCount); //taking the average of samples, should be multiplied by approx 0.02205 to get the correct voltage
+    uint16_t gns = (sum / sampleCount); //taking the average of samples, should be multiplied by approx 0.02205 to get the correct voltage
+    float gnsReal = gns*0.02205;
+    *output = gnsReal;
     
 }
