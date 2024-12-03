@@ -44,7 +44,6 @@ void setup() {
 
     // start serial communication with pc
     Serial.begin(9600);
-    Serial.println(Serial.getTimeout());
 
     // turn on power to radio
     pinMode(APC_VCC, OUTPUT);
@@ -61,6 +60,7 @@ void setup() {
 
         while (true) {} // stop other code from running if we receive an error
     }
+    Serial.println("ID,Voltage,Acceleration,LampCycles,Lat,Long");
 }
 
 unsigned long lastSend = 0;
@@ -79,9 +79,8 @@ void loop() {
 
     }
 
-    if (millis() - sendDelay > lastSend)
+    if (millis() - lastSend > sendDelay)
     {
-        Serial.println("sending message");
         byte msg[] = "vd";
         sendMsg(1, msg, 2);
         lastSend = millis();
@@ -97,24 +96,24 @@ void loop() {
         rLen = 0;
         delay(5);
         uint8_t transmissionLen = radio.read();
-        Serial.println(transmissionLen, HEX);
+        
+        delay(5);
 
-        uint8_t recipient = radio.read();
+        uint8_t recID = radio.read();
         transmissionLen--;
-        Serial.print("transmission intended for: ");
-        Serial.println(recipient, HEX);
-
-        uint8_t sender = radio.read();
-        transmissionLen--;
-        Serial.print("transmission sent from: ");
-        Serial.println(sender, HEX);
+        if (recID != ID)
+        {
+            break;
+        }
+        delay(5);
+        
 
         rLen = radio.readBytes(rInput, transmissionLen);
         delay(5);
 
         if (radio.read() == ']')
         {
-            Serial.println("End of transmission");
+            //Serial.println("End of transmission");
             decode(rInput);
         }
 
@@ -148,15 +147,21 @@ void decode(byte *data)
 
     for (int i = 0; i < sizeof(packedData); i++)
     {
-       u.byteArr[i] = data[i];
+       u.byteArr[i] = data[i+1];
     }
-
-    Serial.println("data from transmission");
-    Serial.println(u.data.batteryVoltage);
-    Serial.println(u.data.biggestAccel);
-    Serial.println(u.data.lampCycles);
-    Serial.println(u.data.lat);
-    Serial.println(u.data.lon);
     
+    Serial.print(data[0]);
+
+    Serial.print(",");
+    Serial.print(u.data.batteryVoltage);
+    Serial.print(",");
+    Serial.print(u.data.biggestAccel, 2);
+    Serial.print(",");
+    Serial.print(u.data.lampCycles);
+    Serial.print(",");
+    
+    Serial.print(u.data.lat, 6);
+    Serial.print(",");
+    Serial.println(u.data.lon, 6);
 
 }
