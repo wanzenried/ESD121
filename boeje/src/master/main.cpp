@@ -80,37 +80,11 @@ void loop() {
 
     while (radio.available() > 0)
     {
-        if (radio.read() != '[')
+        if(radio.recieveMsg(rInput, &rLen) == 0)
         {
-            break;
-        }
-        rLen = 0;
-        delay(5);
-        uint8_t transmissionLen = radio.read();
-        
-        delay(5);
-
-        uint8_t recID = radio.read();
-        transmissionLen--;
-        if (recID != ID)
-        {
-            break;
-        }
-        delay(5);
-        
-
-        rLen = radio.readBytes(rInput, transmissionLen);
-        delay(5);
-
-        if (radio.read() == ']')
-        {
-            //Serial.println("End of transmission");
             decode(rInput);
         }
-
     }
-    
-    
 }
 
 void decode(byte *data)
