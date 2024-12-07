@@ -40,6 +40,7 @@ public:
     int config(uint32_t freq, uint8_t airBaud, uint8_t power, uint8_t baud, uint8_t parity);
     int safeSend(char *msg);
     void sendMsg(uint8_t recipientId, byte *msg, uint8_t msgLen);
+    int  recieveMsg(byte *buffer, uint8_t *bufferLen);
 
 };
 

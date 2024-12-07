@@ -209,3 +209,48 @@ void softAPC::sendMsg(uint8_t recipientId, byte *msg, uint8_t msgLen)
     write(msg, msgLen);       // send message, this way of doing it does not care if there is 0x00 chars in the middle of msg
     write(']');               // specifies end of message
 }
+
+//  try to recieve a full message.
+//  messages will have the following format(disregard '_'):
+//  [Len_rID_sID_data]
+//  returns 2 if incomplete message
+//  returns 1 if message is not intended for this id
+//  otherwise returns 0
+int softAPC::recieveMsg(byte *buffer, uint8_t *bufferLen)
+{
+    //  Check for start char
+    if (read() != '[')
+    {
+        return 2;
+    }
+    delay(2);   //delay so we dont try to read faster than the radio can recieve
+    
+    //  minimum transmissionlen is 2 (sender id + recipient id)
+    int transmissionLen = read();
+    if (transmissionLen < 2)
+    {
+        return 2;
+    }
+    delay(2);
+
+    uint8_t recvId = read();
+    transmissionLen--;
+    if (recvId != _ID)
+    {
+        return 1;
+    }
+    delay(2);
+
+    *bufferLen = readBytes(buffer, transmissionLen);
+
+    delay(2);
+
+    if (read() == ']')
+    {
+        return 0;
+    }
+    else
+    {
+        return 2;
+    }
+}
