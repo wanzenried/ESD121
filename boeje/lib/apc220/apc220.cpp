@@ -1,7 +1,7 @@
 #include <apc220.h>
 
 //Constructor (also calls the constructor for softwareserial)
-softAPC::softAPC(int rxPin, int txPin, int en, int set, int aux) :
+softAPC::softAPC(int rxPin, int txPin, int en, int set, int aux, uint8_t id) :
     SoftwareSerial(rxPin, txPin)
 
 {
@@ -11,6 +11,7 @@ softAPC::softAPC(int rxPin, int txPin, int en, int set, int aux) :
     pinMode(_SET, OUTPUT);
     _AUX = aux;
     pinMode(_AUX, INPUT);
+    _ID = id;
 }
 
 //use only for startup as this function has a built in 100ms delay
@@ -193,4 +194,18 @@ void softAPC::exitSetMode()
 void softAPC::checkReceiving()
 {
     receiving = digitalRead(_AUX);
+}
+
+
+// Send a message over the radio, i dont think messages should be longer than 100 bytes at most, but maybe we can squeze more through if we need it
+void softAPC::sendMsg(uint8_t recipientId, byte *msg, uint8_t msgLen)
+{
+    uint8_t transmissionLen = msgLen + 2;  // length of msg + 1 byte for sender id + 1 byte for reciever id
+
+    write('[');               // specifies start of message
+    write(transmissionLen);
+    write(recipientId);
+    write(_ID);
+    write(msg, msgLen);       // send message, this way of doing it does not care if there is 0x00 chars in the middle of msg
+    write(']');               // specifies end of message
 }
