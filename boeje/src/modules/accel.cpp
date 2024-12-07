@@ -1,4 +1,4 @@
-#include <slave/accel.h>
+#include <modules/accel.h>
 
 #define MPU6050_ADDR 0x68
 #define PWR_MGMT_1 0x6B

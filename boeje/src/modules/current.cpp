@@ -1,4 +1,4 @@
-#include <slave/current.h>
+#include <modules/current.h>
 
 const uint8_t currentPin = A1;
 const uint8_t interruptPin = 2;
