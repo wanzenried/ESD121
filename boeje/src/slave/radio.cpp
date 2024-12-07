@@ -1,7 +1,7 @@
 #include <slave/radio.h>
 
 
-char rInput[50];
+byte rInput[50];
 uint8_t rLen;
 
 const uint8_t ID = 1; //this device id
@@ -19,12 +19,7 @@ cmd recieveCommand(uint8_t *senderID)
 {
     while (radio.available() > 0)
     {
-        if (radio.read() != '[')
-        {
-            break;
-        }
-
-        if (recieveMsg(rInput, &rLen) == 0)     //recieved a complete message, for us
+        if (radio.recieveMsg(rInput, &rLen) == 0)     //recieved a complete message, for us
         {
             *senderID = rInput[0];  //first byte is always sender id
             return decode();
@@ -36,38 +31,6 @@ cmd recieveCommand(uint8_t *senderID)
 
     }
     return NOCMD;
-}
-
-
-int recieveMsg(char *buffer, uint8_t *bufferLen)
-{
-
-    int transmissionLen = radio.read();
-
-    uint8_t recvId = radio.read();      //first byte of transmission is the id of the device that is supposed to recieve the message
-    transmissionLen--;
-
-
-    if(recvId != ID)
-    {
-        return 1;
-    }
-
-
-    *bufferLen = radio.readBytes(buffer,transmissionLen);
-
-    buffer[*bufferLen] = '\0';
-    
-
-
-    if (radio.read() == ']')
-    {
-        return 0;
-    }
-    else
-    {
-        return 2;
-    }
 }
 
 cmd decode()
