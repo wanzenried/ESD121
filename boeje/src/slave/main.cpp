@@ -20,7 +20,7 @@
 
 //function prototypes:
 
-void packValues(packedData *data, char *buffer);
+void packValues(packedData *data, byte *buffer);
 
 //global variables:
 
@@ -28,7 +28,7 @@ packedData data = {0,0,0,0,0};
 
 uint8_t sender = 0;
 
-char dataPck[sizeof(packedData) + 6];               //2 bytes for each of accel, voltage and cycles, 4 bytes for each of lat and lon. this is the minimum, so just a bit more to be sure
+byte dataPck[sizeof(packedData) + 6];               //2 bytes for each of accel, voltage and cycles, 4 bytes for each of lat and lon. this is the minimum, so just a bit more to be sure
 uint8_t dataLen = 0;
 
 
@@ -130,7 +130,7 @@ void loop() {
 }
 
 
-void packValues(packedData *data, char *buffer)
+void packValues(packedData *data, byte *buffer)
 {
     #ifdef SERIALDEBUG
     Serial.println(data->biggestAccel);

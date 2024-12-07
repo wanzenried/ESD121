@@ -6,7 +6,7 @@ uint8_t rLen;
 
 const uint8_t ID = 1; //this device id
 
-softAPC radio(APC_TXD, APC_RXD, APC_EN, APC_SET, APC_AUX);
+softAPC radio(APC_TXD, APC_RXD, APC_EN, APC_SET, APC_AUX, ID);
 
 int beginRadio()
 {
@@ -87,18 +87,7 @@ cmd decode()
 
 }
 
-
-// Send a message over the radio, i dont think messages should be longer than 100 bytes at most, but maybe we can squeze more through if we need it
-void sendMsg(uint8_t recipientId, char *msg, uint8_t msgLen)
+void sendMsg(uint8_t recipientId, byte *msg, uint8_t msgLen)
 {
-    
-    uint8_t transmissionLen = msgLen + 2;  // length of msg + 1 byte for sender id + 1 byte for reciever id
-
-    radio.write('[');               // specifies start of message
-    radio.write(transmissionLen);
-    radio.write(recipientId);
-    radio.write(ID);
-    radio.write(msg, msgLen);       // send message, this way of doing it does not care if there is 0x00 chars in the middle of msg
-    radio.write(']');               // specifies end of message
-    
+    radio.sendMsg(recipientId, msg, msgLen);
 }
