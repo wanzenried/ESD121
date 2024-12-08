@@ -19,7 +19,8 @@ void setup()
 void loop()
 {
     updateAccel(&mag);
-    Serial.print("magnitude:");
+    Serial.print(">magnitude:");
     Serial.println(mag);
+    mag = 0.0;
 
 }
