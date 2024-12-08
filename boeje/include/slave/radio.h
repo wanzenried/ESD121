@@ -9,8 +9,7 @@ typedef enum cmd {
 
 int beginRadio();
 cmd recieveCommand(uint8_t *senderID);
-void sendMsg(uint8_t recipientId, char *msg, uint8_t msgLen);
-int recieveMsg(char *buffer, uint8_t *bufferLen);
+void sendMsg(uint8_t recipientId, byte *msg, uint8_t msgLen);
 cmd decode();
 
 //APC pins

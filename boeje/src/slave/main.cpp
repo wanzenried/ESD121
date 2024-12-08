@@ -3,6 +3,7 @@
 
 //our libraries / includes
 #include <apc220.h>
+#include <common.h>
 #include <slave/accel.h>
 #include <slave/current.h>
 #include <slave/voltage.h>
@@ -16,18 +17,10 @@
 
 //defines:
 
-typedef struct packedData
-{
-    float biggestAccel;      // biggest acceleration recorded since last transmission (should contain the length of the acceleration vector)
-    float batteryVoltage;    // battery voltage, stored as a number between 0-1023, same as analogread output
-    uint16_t lampCycles;        // count of times we've seen the lamp turn on and off since last transmission
-    float lat;
-    float lon;
-} packedData;
 
 //function prototypes:
 
-void packValues(packedData *data, char *buffer);
+void packValues(packedData *data, byte *buffer);
 
 //global variables:
 
@@ -35,7 +28,7 @@ packedData data = {0,0,0,0,0};
 
 uint8_t sender = 0;
 
-char dataPck[sizeof(packedData) + 6];               //2 bytes for each of accel, voltage and cycles, 4 bytes for each of lat and lon. this is the minimum, so just a bit more to be sure
+byte dataPck[sizeof(packedData) + 6];               //2 bytes for each of accel, voltage and cycles, 4 bytes for each of lat and lon. this is the minimum, so just a bit more to be sure
 uint8_t dataLen = 0;
 
 
@@ -137,7 +130,7 @@ void loop() {
 }
 
 
-void packValues(packedData *data, char *buffer)
+void packValues(packedData *data, byte *buffer)
 {
     #ifdef SERIALDEBUG
     Serial.println(data->biggestAccel);
