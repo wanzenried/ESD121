@@ -4,7 +4,9 @@
 byte rInput[50];
 uint8_t rLen;
 
-const uint8_t ID = 1; //this device id
+#ifndef ID
+#define ID 1 //this device id
+#endif
 
 softAPC radio(APC_TXD, APC_RXD, APC_EN, APC_SET, APC_AUX, ID);
 
