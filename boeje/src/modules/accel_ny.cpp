@@ -57,7 +57,7 @@ int accelSetup()
     return 0;
 }
 
-void updateAccel(vec3D *output)
+void updateAccel()
 {
     int16_t aX, aY, aZ;
 
@@ -69,7 +69,18 @@ void updateAccel(vec3D *output)
     Accel.z = aZ * scaleFactor - gravity.z;
     Accel.magnitude = sqrt(sq(Accel.x)+sq(Accel.y)+sq(Accel.z));
 
+}
+
+void getAccel(vec3D *output)
+{
+    updateAccel();
     *output = Accel;
+}
+
+float getMagnitude()
+{
+    updateAccel();
+    return Accel.magnitude;
 }
 
 void updateGravity(vec3D *gravity , int16_t ax, int16_t ay, int16_t az)

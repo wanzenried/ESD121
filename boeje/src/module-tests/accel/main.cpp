@@ -17,7 +17,7 @@ void setup()
 
 void loop()
 {
-  updateAccel(&accel);
+  getAccel(&accel);
 
   Serial.print(">Magnitude:");
   Serial.print(accel.magnitude);

@@ -10,5 +10,7 @@ float magnitude;
 
 
 int accelSetup();
-void updateAccel(vec3D *output);
+void updateAccel();
+void getAccel(vec3D *output);
+float getMagnitude();
 void updateGravity(vec3D *gravity , int16_t ax, int16_t ay, int16_t az);

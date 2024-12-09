@@ -4,7 +4,7 @@
 //our libraries / includes
 #include <apc220.h>
 #include <common.h>
-#include <modules/accel.h>
+#include <modules/accel_ny.h>
 #include <modules/current.h>
 #include <modules/voltage.h>
 #include <slave/radio.h>
@@ -124,7 +124,13 @@ void loop() {
     updateCurrent(&data.lampCycles);
 
     //Get acceleration
-    updateAccel(&data.biggestAccel);
+    float mag = getMagnitude();
+    if (mag > data.biggestAccel)
+    {
+        data.biggestAccel = mag;
+    }
+    
+    
     
 
 }
