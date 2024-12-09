@@ -57,6 +57,8 @@ void setup() {
 unsigned long lastSend = 0;
 unsigned long sendDelay = 3000;
 
+uint8_t sID = 1;
+
 void loop() {
     if (Serial.available() > 0)
     {
@@ -72,9 +74,17 @@ void loop() {
 
     if (millis() - lastSend > sendDelay)
     {
+        if(sID == ID)
+        {
+            sID++;
+        }
+        Serial.print("Sending VD to id ");
+        Serial.println(sID);
         byte msg[] = "vd";
-        radio.sendMsg(1, msg, 2);
+        radio.sendMsg(sID, msg, 2);
         lastSend = millis();
+        sID++;
+
     }
     
 
