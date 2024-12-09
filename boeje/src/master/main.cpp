@@ -22,6 +22,9 @@ void decode(byte *data);
 
 const uint8_t ID = 0; //this device id
 
+uint8_t slaveIDs[] = {1,4,7};
+uint8_t slaveCount = 3;
+
 
 byte sInput[50];
 uint8_t sLen = 0;
@@ -57,6 +60,8 @@ void setup() {
 unsigned long lastSend = 0;
 unsigned long sendDelay = 3000;
 
+uint8_t c = 0;
+
 void loop() {
     if (Serial.available() > 0)
     {
@@ -72,9 +77,19 @@ void loop() {
 
     if (millis() - lastSend > sendDelay)
     {
+        if (c >= slaveCount)
+        {
+            c = 0;
+        }
+        
+        
+        Serial.print("Sending VD to id ");
+        Serial.println(slaveIDs[c]);
         byte msg[] = "vd";
-        radio.sendMsg(1, msg, 2);
+        radio.sendMsg(slaveIDs[c], msg, 2);
         lastSend = millis();
+        c++;
+
     }
     
 

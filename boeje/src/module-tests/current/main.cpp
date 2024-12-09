@@ -21,9 +21,8 @@ void loop()
 
     float current = voltage / 10.0; //  1V meassured corresponds to 0.1A, 2V to 0.2A and so on
 
-    Serial.print("Current: ");
+    Serial.print(">Current: ");
     Serial.print(current, 2);
-    Serial.println(" A");
-    delay(250);
+    delay(10);
 
 }

@@ -26,7 +26,9 @@ void loop()
   Serial.print(",aY:");
   Serial.print(accel.y);
   Serial.print(",aZ:");
-  Serial.println(accel.z);
+  Serial.print(accel.z);
+  Serial.println(",1G:9.81,2G:19.62,Tresh:5.0");
+
 
   if (accel.magnitude > 5.0)
   {

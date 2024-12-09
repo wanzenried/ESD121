@@ -18,7 +18,13 @@ void setup()
 void loop()
 {
     updateVoltage(&voltage);
-    Serial.print("Voltage:");
+    Serial.print(">Voltage:");
     Serial.println(voltage);
+
+    if (voltage > 11.0)
+    {
+        Serial.println("Low voltage");
+    }
+    
 
 }

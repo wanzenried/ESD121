@@ -1,24 +1,38 @@
 #include <modules/gps.h>
 
+//#define GPSSOFTSERIAL
 
+#ifdef GPSSOFTSERIAL
+#include <SoftwareSerial.h>
+SoftwareSerial soft(5,4);
+#endif
 
 // Definere variabler vi skal bruge
-
 
 float laengdegrad[50];
 float breddegrad[50];
 int taeller = 0;
 
+int updatedVal = 0;
+
+
+
 
 // Omregner nmea format koordinat til decimal grader, da det er lettere at forstå for mennesker
 
 void gpsSetup(){
+    #ifdef GPSSOFTSERIAL
+    soft.begin(9600);
+    #else
     Serial.begin(9600);
+    #endif
 }
 
-void updateGps(float *latOutput, float *lonOutput)
+int updateGps(float *latOutput, float *lonOutput)
 {
+    updatedVal = 0;
     getnmeasat(latOutput, lonOutput);
+    return updatedVal;
 }
 
 
@@ -131,6 +145,7 @@ void nmeaprinter(char *nmeasat, float *latOutput, float *lonOutput) {
 
             *latOutput = omregngrader(latitude, nord[0]);
             *lonOutput = omregngrader(longitude, oest[0]);
+            updatedVal = 1;
         }
     }
 }
@@ -139,9 +154,14 @@ void getnmeasat(float *latOutput, float *lonOutput) {
 
     static char nmea[100]; 
     static size_t tjekarray = 0;
-
+    #ifdef GPSSOFTSERIAL
+    while (soft.available() >0) {
+        char c = soft.read(); 
+    #else
     while (Serial.available() > 0) {
         char c = Serial.read(); 
+    #endif
+        
 
         if (tjekarray < sizeof(nmea) - 1) {
 

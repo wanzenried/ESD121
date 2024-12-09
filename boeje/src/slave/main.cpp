@@ -7,7 +7,7 @@
 #include <modules/accel.h>
 #include <modules/current.h>
 #include <modules/voltage.h>
-#include <slave/radio.h>
+#include <modules/radio.h>
 
 //we can only use the gps module if serialdebug is disabled
 //#define SERIALDEBUG
