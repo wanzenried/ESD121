@@ -1,6 +1,12 @@
 #include <Arduino.h>
 #include <common.h>
+
+
+//APC pins
+#define APC_VCC 13  //5v
+
 #include <modules/radio.h>
+
 
 void packValues(packedData *data, byte *buffer);
 
@@ -14,7 +20,13 @@ uint8_t dataLen = 0;
 void setup()
 {
     Serial.begin(9600);
+
+    // turn on power to radio
+    pinMode(APC_VCC, OUTPUT);
+    digitalWrite(APC_VCC, HIGH);
+
     int err = beginRadio();
+
 
     if (err != 0)
     {
