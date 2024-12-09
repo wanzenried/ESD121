@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include <modules/accel_ny.h>
+#include <modules/accel.h>
 
 vec3D accel;
 

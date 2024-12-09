@@ -4,7 +4,7 @@
 //our libraries / includes
 #include <apc220.h>
 #include <common.h>
-#include <modules/accel_ny.h>
+#include <modules/accel.h>
 #include <modules/current.h>
 #include <modules/voltage.h>
 #include <slave/radio.h>
