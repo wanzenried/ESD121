@@ -1,150 +1,97 @@
 #include <modules/accel.h>
 
-#define MPU6050_ADDR 0x68
-#define PWR_MGMT_1 0x6B
-#define PWR_MGMT_2 0x6C
-#define ACCEL_CONFIG 0x1C
 
-// Variabler til vektor
-float gravityX = 0;
-float gravityY = 0;
-float gravityZ = 0;
-const float filterconstant = 0.8; //Lavpasfilter-konstant
-const float scaleFactor = 9.81 / 4096; // Konvertering til 2g-kraft
+///#define CALIBRATEACC
+#ifndef CALIBRATEACC
+    #define CUSTOMOFFSET
+    #ifdef CUSTOMOFFSET
+    const int16_t aXOffset = -2662;
+    const int16_t aYOffset = -5;
+    const int16_t aZOffset = 1032;
+    #endif
+#endif
 
-void accelSetup()
+const float G = 9.81;
+const float GS = sq(G);
+
+const uint8_t accelRange = 2;   // 0 = ±2G, 1  = ±4G, 2 = ±8G, 3 = ±16G
+const int16_t gScale = 16384 >> accelRange;
+const float scaleFactor = G / gScale;
+const float filterConstant = 0.8;
+
+
+vec3D gravity = {1,1,1,G};
+vec3D Accel = {0,0,0,0};
+
+MPU6050 mpu;
+
+int accelSetup()
 {
     Wire.begin();
-    delay(10);
-    writeRegister(PWR_MGMT_1, 0x80);
-    delay(200);
-    //readRegister(PWR_MGMT_1);
-    
+    mpu.initialize();
 
-    writeRegister(PWR_MGMT_1, 0b00001000);
-    delay(10);
-    //readRegister(PWR_MGMT_1);
-
-    writeRegister(PWR_MGMT_2, 0b00000111);
-    delay(10);
-    //readRegister(PWR_MGMT_2);
-
-    //  configure accelrerometer to +-8G sensitivity
-    writeRegister(ACCEL_CONFIG, 0b00010000);
-}
-
-void updateAccel(float *output)
-{
-    int32_t rawAx = 0;
-    int32_t rawAy = 0;
-    int32_t rawAz = 0;
-
-    int count = 10;
-    for (int i = 0; i < count; i++)
+    if (!mpu.testConnection())
     {
-        rawAx += accelX();
-        rawAy += accelY();
-        rawAz += accelZ();
-        delayMicroseconds(1100);
+        return 1;
     }
 
-    rawAx = rawAx/count;
-    rawAy = rawAy/count;
-    rawAz = rawAz/count;
+    #ifdef CALIBRATEACC
+    Serial.println("calibrating mpu6050, program will terminate afterwards. press any key to continue");
+    while (Serial.available()) Serial.read();
+    while (!Serial.available()) {}
+    while (Serial.available()) Serial.read();
 
-    filterGravity(rawAx,rawAy, rawAz);
+    mpu.CalibrateAccel(8);
+    delay(100);
+    mpu.PrintActiveOffsets();
+    while(true) {}
+    #endif
+    #ifdef CUSTOMOFFSET
+    mpu.setXAccelOffset(aXOffset);
+    mpu.setYAccelOffset(aYOffset);
+    mpu.setZAccelOffset(aZOffset);
+    #endif
 
-    vec3D accelVector = calculateVectorAcc(rawAx, rawAy, rawAz);
+    mpu.setFullScaleAccelRange(accelRange);
 
-    if (accelVector.magnitude > *output)
-    {
-        *output = accelVector.magnitude;
-    }
+    return 0;
+}
+
+void updateAccel()
+{
+    int16_t aX, aY, aZ;
+
+    mpu.getAcceleration(&aX, &aY, &aZ);
+    updateGravity(&gravity ,aX, aY, aZ);
+
+    Accel.x = aX * scaleFactor - gravity.x;
+    Accel.y = aY * scaleFactor - gravity.y;
+    Accel.z = aZ * scaleFactor - gravity.z;
+    Accel.magnitude = sqrt(sq(Accel.x)+sq(Accel.y)+sq(Accel.z));
 
 }
 
-
-
-void writeRegister(uint8_t reg, uint8_t value)
+void getAccel(vec3D *output)
 {
-    Wire.beginTransmission(MPU6050_ADDR);
-    Wire.write(reg);
-    Wire.write(value);
-    Wire.endTransmission(true);
+    updateAccel();
+    *output = Accel;
 }
 
-int8_t readRegister(uint8_t reg)
+float getMagnitude()
 {
-    Wire.beginTransmission(MPU6050_ADDR);
-    Wire.write(reg);
-    Wire.endTransmission(false);
-    Wire.requestFrom(MPU6050_ADDR, 1, true);
-    uint8_t value = Wire.read();
-    return value;
+    updateAccel();
+    return Accel.magnitude;
 }
 
-
-int16_t accelX()
+void updateGravity(vec3D *gravity , int16_t ax, int16_t ay, int16_t az)
 {
-    int8_t high_byte = readRegister(0x3B);
-    int8_t low_byte = readRegister(0x3C);
+    float gx = gravity->x * filterConstant + (1-filterConstant) * ax * scaleFactor;
+    float gy = gravity->y * filterConstant + (1-filterConstant) * ay * scaleFactor;
+    float gz = gravity->z * filterConstant + (1-filterConstant) * az * scaleFactor;
 
-    int16_t combined_value = int16_t((high_byte<<8) | low_byte);
-    return combined_value;
-}
+    float s = G / (sqrt(sq(gx) + sq(gy) + sq(gz)));
 
-int16_t accelY()
-{
-    int8_t high_byte = readRegister(0x3d);
-    int8_t low_byte = readRegister(0x3e);
-
-    int16_t combined_value = int16_t((high_byte<<8) | low_byte);
-    return combined_value;
-}
-
-int16_t accelZ()
-{
-    int8_t high_byte =readRegister(0x3F);
-    int8_t low_byte = readRegister(0x40);
-
-    int16_t combined_value = int16_t((high_byte<<8) | low_byte);
-    return combined_value;
-}
-
-void filterGravity(int_fast16_t rawAx, int16_t rawAy, int16_t rawAz)
-{
-    // Convert raw to m/s^2
-    float ax = rawAx * scaleFactor;
-    float ay = rawAy * scaleFactor;
-    float az = rawAz * scaleFactor;
-
-    //Lowpassfilter for the gravity estimat
-    gravityX = filterconstant * gravityX + (1 - filterconstant)*ax;
-    gravityY = filterconstant * gravityY + (1 - filterconstant)*ay;
-    gravityZ = filterconstant * gravityZ + (1 - filterconstant)*az;
-
-    gravityX = max(-9.81, min(9.81, gravityX));
-    gravityY = max(-9.81, min(9.81, gravityY));
-    gravityZ = max(-9.81, min(9.81, gravityZ));
-
-
-
-}
-
-vec3D calculateVectorAcc(int_fast16_t rawAx, int16_t rawAy, int16_t rawAz)
-{
-
-    // remove the gravity contribute
-    float ax = rawAx * scaleFactor - gravityX;
-    float ay = rawAy * scaleFactor - gravityY;
-    float az = rawAz * scaleFactor - gravityZ;
-
-    //Calculate magnitude
-    float magnitude = sqrt((ax*ax)+(ay*ay)+(az*az));
-
-    vec3D v = {ax, ay, az, magnitude};
-
-    //return vector
-    return v;
-
+    gravity->x = gx*s;
+    gravity->y = gy*s;
+    gravity->z = gz*s;
 }

@@ -124,7 +124,13 @@ void loop() {
     updateCurrent(&data.lampCycles);
 
     //Get acceleration
-    updateAccel(&data.biggestAccel);
+    float mag = getMagnitude();
+    if (mag > data.biggestAccel)
+    {
+        data.biggestAccel = mag;
+    }
+    
+    
     
 
 }
