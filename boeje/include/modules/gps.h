@@ -3,7 +3,7 @@
 #include <string.h>
 
 
-void updateGps(float *latOutput, float *lonOutput);
+int updateGps(float *latOutput, float *lonOutput);
 float omregngrader(char *Koordinaterstring, char retning);
 int nmeaparser(char *nmeasat, char *nmeaarr[]);
 bool getkoordinater(char *ting[], char **latitude, char **longitude, char **nord, char **oest);
