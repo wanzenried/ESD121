@@ -1,13 +1,13 @@
 #include <modules/accel.h>
 
 
-//#define CALIBRATEACC
+///#define CALIBRATEACC
 #ifndef CALIBRATEACC
     #define CUSTOMOFFSET
     #ifdef CUSTOMOFFSET
-    const int16_t aXOffset = -318;
-    const int16_t aYOffset = 599;
-    const int16_t aZOffset = 1428;
+    const int16_t aXOffset = -2662;
+    const int16_t aYOffset = -5;
+    const int16_t aZOffset = 1032;
     #endif
 #endif
 

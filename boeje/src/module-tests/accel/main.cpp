@@ -28,6 +28,12 @@ void loop()
   Serial.print(",aZ:");
   Serial.println(accel.z);
 
+  if (accel.magnitude > 5.0)
+  {
+    Serial.println("big acceleration detected");
+  }
+  
+
   delay(10);
   
 }
