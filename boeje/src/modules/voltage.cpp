@@ -1,4 +1,4 @@
-#include <slave/voltage.h>
+#include <modules/voltage.h>
 
 const uint8_t voltagePin = A0;
 

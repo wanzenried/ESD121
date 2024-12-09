@@ -1,4 +1,4 @@
-#include <slave/gps.h>
+#include <modules/gps.h>
 
 
 
