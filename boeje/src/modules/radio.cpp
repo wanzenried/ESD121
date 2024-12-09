@@ -1,4 +1,4 @@
-#include <slave/radio.h>
+#include <modules/radio.h>
 
 
 byte rInput[50];
