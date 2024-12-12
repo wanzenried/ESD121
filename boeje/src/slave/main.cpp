@@ -94,7 +94,7 @@ void loop() {
     case VARDMP:     //send back stored values
         packValues(&data, dataPck);
         sendMsg(sender, dataPck, dataLen);
-        data.lampCycles = 0; //Resettes efter værdien er sendt afsted
+        data.lampCycles = 0; //Resettes efter vaerdien er sendt afsted
         data.biggestAccel = 0.0;
         break;
 

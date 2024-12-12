@@ -18,7 +18,7 @@ int updatedVal = 0;
 
 
 
-// Omregner nmea format koordinat til decimal grader, da det er lettere at forstå for mennesker
+// Omregner nmea format koordinat til decimal grader, da det er lettere at forstaa for mennesker
 
 void gpsSetup(){
     #ifdef GPSSOFTSERIAL
@@ -50,7 +50,7 @@ float omregngrader(char *Koordinaterstring, char retning) {
     }
     return decimalgrader;
 }
-// Funktioner der parser nmea sætning (Erstatter , med null-terminator for at lave en ny string)
+// Funktioner der parser nmea saetning (Erstatter , med null-terminator for at lave en ny string)
 int nmeaparser(char *nmeasat, char *nmeaarr[]) {
 
     int nmeataeller = 0;
@@ -73,7 +73,7 @@ int nmeaparser(char *nmeasat, char *nmeaarr[]) {
     }
     return nmeataeller;
 }
-// Gemmer koordinater i arrays, og er bool for at lave return statement så man kan lave if statement
+// Gemmer koordinater i arrays, og er bool for at lave return statement saa man kan lave if statement
 bool getkoordinater(char *ting[], char **latitude, char **longitude, char **nord, char **oest) {
 
     *latitude = ting[1];
@@ -129,7 +129,7 @@ bool getkoordinater(char *ting[], char **latitude, char **longitude, char **nord
 
     taeller = 0; 
 }*/
-//Samlede funktion der caller de fleste funktioner, for at printe koordinater + gennemsnit efter 50 samples eller når data bliver utilgængeligt
+//Samlede funktion der caller de fleste funktioner, for at printe koordinater + gennemsnit efter 50 samples eller naar data bliver utilgaengeligt
 void nmeaprinter(char *nmeasat, float *latOutput, float *lonOutput) {
 
     if (strncmp(nmeasat, "$GPGLL", 6) == 0) { 
