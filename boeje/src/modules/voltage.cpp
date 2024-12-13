@@ -23,7 +23,7 @@ void updateVoltage(float *output)
     }
 
     uint16_t gns = (sum / sampleCount); //taking the average of samples, should be multiplied by approx 0.02205 to get the correct voltage
-    float gnsReal = gns*0.02205;
+    float gnsReal = gns*0.02201;
     *output = gnsReal;
     
 }
