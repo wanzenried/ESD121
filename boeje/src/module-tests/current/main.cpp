@@ -4,9 +4,9 @@
 
 #include <Arduino.h>
 
-const uint8_t currentPin = A2;
+const uint8_t currentPin = A1;
 
-const float voltageConstant = 0.00489;
+const float voltageConstant = 0.0045;
 
 void setup()
 {
@@ -22,7 +22,9 @@ void loop()
     float current = voltage / 10.0; //  1V meassured corresponds to 0.1A, 2V to 0.2A and so on
 
     Serial.print(">Current: ");
-    Serial.print(current, 2);
+    Serial.print(current, 4);
+    Serial.print(",500mA:0.500,0mA:0.0");
+    Serial.println();
     delay(10);
 
 }
