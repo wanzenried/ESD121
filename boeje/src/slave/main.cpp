@@ -55,17 +55,23 @@ void setup() {
 
     if (err != 0)
     {
+        pinMode(LED_BUILTIN, OUTPUT);
+
         #ifdef SERIALDEBUG
         Serial.print("Could not configure radio, err: ");
         Serial.println(err);
         #endif
 
-        #ifndef SERIALDEBUG
-        pinMode(LED_BUILTIN, OUTPUT);
-        digitalWrite(LED_BUILTIN, HIGH);
-        #endif
 
-        while (true) {} // stop other code from running if we receive an error
+
+        // stop other code from running if we receive an error
+        while (true)
+        {
+            digitalWrite(LED_BUILTIN, HIGH);
+            delay(200);
+            digitalWrite(LED_BUILTIN, LOW);
+            delay(200);
+        }
     }
 }
 
