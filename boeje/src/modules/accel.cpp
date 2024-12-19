@@ -14,7 +14,7 @@
 const float G = 9.81;
 const float GS = sq(G);
 
-const uint8_t accelRange = 2;   // 0 = ±2G, 1  = ±4G, 2 = ±8G, 3 = ±16G
+const uint8_t accelRange = 2;   // 0 = +-2G, 1  = +-4G, 2 = +-8G, 3 = +-16G
 const int16_t gScale = 16384 >> accelRange;
 const float scaleFactor = G / gScale;
 const float filterConstant = 0.8;
