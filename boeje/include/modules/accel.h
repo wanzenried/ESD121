@@ -8,7 +8,6 @@ float z;
 float magnitude;
 }vec3D;
 
-
 int accelSetup();
 void updateAccel();
 void getAccel(vec3D *output);

@@ -20,7 +20,6 @@ void loop()
     updateVoltage(&voltage);
     Serial.print(">Voltage:");
     Serial.print(voltage);
-    //Serial.print(",20V:20.0,0V:0.0");
     Serial.println();
 
     if (voltage < 11.0)

@@ -3,7 +3,6 @@
 //Constructor (also calls the constructor for softwareserial)
 softAPC::softAPC(int rxPin, int txPin, int en, int set, int aux, uint8_t id) :
     SoftwareSerial(rxPin, txPin)
-
 {
     _EN = en;
     pinMode(_EN, OUTPUT);
@@ -21,14 +20,6 @@ void softAPC::begin(long speed)
     digitalWrite(_EN, HIGH);
     digitalWrite(_SET, HIGH);
     delay(100); //time to let the module start up. double the value in the datasheet
-
-    //!not the way to do it apparently
-    /*int itrPin = digitalPinToInterrupt(_AUX);
-    if (itrPin != -1)
-    {
-        interruptActive = true;
-        attachInterrupt(itrPin, checkReceiving, CHANGE);
-    }*/
     
     SoftwareSerial::begin(speed);
 }
@@ -84,25 +75,6 @@ int softAPC::config(uint32_t freq, uint8_t airBaud, uint8_t power, uint8_t baud,
         return 32;
     }
 
-}
-
-//  check if the module is currently receiving data, send data, if it is not receiving
-//  returns: -1 if the module is reciving data
-//  else returns the same as write() which is the number of bytes written
-int softAPC::safeSend(char *msg)
-{
-    if(!interruptActive) //for now this will always be false, atleast until i figure out how to get an interrupt working...
-    {
-        checkReceiving();
-    }
-
-    if (receiving)
-    {
-        return -1;  //cannot send, currently receiving data
-    }
-
-    return write(msg);  // send message and return the number og bytes sent
-    
 }
 
 // calculates the baud rate based on the parameter supplied
@@ -189,11 +161,6 @@ void softAPC::exitSetMode()
 {
     digitalWrite(_SET, HIGH);
     delay(10);  //from datasheet
-}
-
-void softAPC::checkReceiving()
-{
-    receiving = digitalRead(_AUX);
 }
 
 

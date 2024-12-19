@@ -12,7 +12,7 @@ cmd recieveCommand(uint8_t *senderID);
 void sendMsg(uint8_t recipientId, byte *msg, uint8_t msgLen);
 cmd decode();
 
-//APC pins
+//APC pins Standard values if new values are not set through Platformio
 #ifndef APC_PINS
 #define APC_EN  7  //[output] HIGH enable, LOW disable
 #define APC_RXD 8  //connected to TX on board

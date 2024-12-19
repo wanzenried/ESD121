@@ -1,8 +1,8 @@
+//outputs lat and lon whenever new values are available from the gps module
+
 #include <Arduino.h>
 
 #include <modules/gps.h>
-
-
 
 float lat = 0.0;
 float lon = 0.0;

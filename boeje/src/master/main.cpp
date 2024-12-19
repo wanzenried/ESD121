@@ -3,8 +3,6 @@
 #include <stdlib.h>
 #include <common.h>
 
-//defines:
-
 //APC pins
 #define APC_VCC 13  //5v
 #define APC_EN  12  //[output] HIGH enable, LOW disable
@@ -32,7 +30,6 @@ const unsigned long maxDelayComm = 3600UL *1000UL; //1 hour (in milliseconds)
 const unsigned long sendDelay = (maxDelayComm / slaveCount) / 2;
 
 unsigned long lastSend = 0;
-
 
 byte sInput[50];
 uint8_t sLen = 0;
@@ -64,7 +61,7 @@ void setup() {
     }
     Serial.print("communcating with slave module every ");
     Serial.print(sendDelay / 1000.0);
-    Serial.println(" seconds");
+    Serial.println(" seconds\n");
     Serial.println("ID,Voltage,Acceleration,LampCycles,Lat,Long");
 }
 
@@ -77,11 +74,8 @@ void loop() {
         uint8_t nId = Serial.parseInt();
         sLen = Serial.readBytesUntil('\n', sInput, 45);
         sInput[sLen] = '\0';
-
-        //Serial.println((char)sInput);
         
         radio.sendMsg(nId, sInput, sLen);
-
     }
 
     if (millis() - lastSend > sendDelay)
@@ -91,16 +85,11 @@ void loop() {
             c = 0;
         }
         
-        
-        Serial.print("Sending VD to id ");
-        Serial.println(slaveIDs[c]);
         byte msg[] = "vd";
         radio.sendMsg(slaveIDs[c], msg, 2);
         lastSend = millis();
         c++;
-
     }
-    
 
     while (radio.available() > 0)
     {
@@ -126,9 +115,7 @@ void decode(byte *data)
 
     Serial.print(millis() / 1000.0);
     Serial.print(" : ");
-    
     Serial.print(data[0]);
-
     Serial.print(",");
     Serial.print(u.data.batteryVoltage);
     Serial.print(",");
@@ -136,9 +123,7 @@ void decode(byte *data)
     Serial.print(",");
     Serial.print(u.data.lampCycles);
     Serial.print(",");
-    
     Serial.print(u.data.lat, 6);
     Serial.print(",");
     Serial.println(u.data.lon, 6);
-
 }

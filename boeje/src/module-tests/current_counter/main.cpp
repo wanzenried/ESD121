@@ -7,7 +7,6 @@ void setup()
 {
     Serial.begin(9600);
     currentSetup();
-
 }
 
 void loop()
@@ -21,7 +20,4 @@ void loop()
     }
 
     delay(5);
-    
-
-
 }
