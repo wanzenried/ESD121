@@ -62,8 +62,6 @@ void setup() {
         Serial.println(err);
         #endif
 
-
-
         // stop other code from running if we receive an error
         while (true)
         {
@@ -78,7 +76,6 @@ void setup() {
 void loop() {
 
     // If there is communication, handle it and send back a response if neccesary
-
     switch (recieveCommand(&sender))
     {
     case VARDMP:     //send back stored values
