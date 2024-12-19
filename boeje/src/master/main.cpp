@@ -22,8 +22,16 @@ void decode(byte *data);
 
 const uint8_t ID = 0; //this device id
 
+
+// constant to control how we talk to slaves
 uint8_t slaveIDs[] = {1,4,7};
 uint8_t slaveCount = 3;
+
+const unsigned long maxDelayComm = 3600UL *1000UL; //1 hour (in milliseconds)
+
+const unsigned long sendDelay = (maxDelayComm / slaveCount) / 2;
+
+unsigned long lastSend = 0;
 
 
 byte sInput[50];
@@ -54,11 +62,12 @@ void setup() {
 
         while (true) {} // stop other code from running if we receive an error
     }
+    Serial.print("communcating with slave module every ");
+    Serial.print(sendDelay / 1000.0);
+    Serial.println(" seconds");
     Serial.println("ID,Voltage,Acceleration,LampCycles,Lat,Long");
 }
 
-unsigned long lastSend = 0;
-unsigned long sendDelay = 3000;
 
 uint8_t c = 0;
 
@@ -114,6 +123,9 @@ void decode(byte *data)
     {
        u.byteArr[i] = data[i+1];
     }
+
+    Serial.print(millis() / 1000.0);
+    Serial.print(" : ");
     
     Serial.print(data[0]);
 
