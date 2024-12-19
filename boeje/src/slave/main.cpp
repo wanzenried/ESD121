@@ -39,23 +39,7 @@ void setup() {
     // start serial communication with pc
     Serial.begin(9600);
 
-
-
-    Serial.println("setting dummy values for internal vaiables");
     #endif
-
-    data.lat = 12.345678;
-    data.lon = 23.456789;
-
-    #ifdef SERIALDEBUG
-    Serial.println(data.biggestAccel);
-    Serial.println(data.batteryVoltage);
-    Serial.println(data.lampCycles);
-    Serial.println(data.lat);
-    Serial.println(data.lon);
-    #endif
-
-    //split16bit(0xaaff, geohash, 0);
 
     voltageSetup(10, 2);
 
@@ -71,24 +55,27 @@ void setup() {
 
     if (err != 0)
     {
+        pinMode(LED_BUILTIN, OUTPUT);
+
         #ifdef SERIALDEBUG
         Serial.print("Could not configure radio, err: ");
         Serial.println(err);
         #endif
 
-        #ifndef SERIALDEBUG
-        pinMode(LED_BUILTIN, OUTPUT);
-        digitalWrite(LED_BUILTIN, HIGH);
-        #endif
-
-        while (true) {} // stop other code from running if we receive an error
+        // stop other code from running if we receive an error
+        while (true)
+        {
+            digitalWrite(LED_BUILTIN, HIGH);
+            delay(200);
+            digitalWrite(LED_BUILTIN, LOW);
+            delay(200);
+        }
     }
 }
 
 void loop() {
 
     // If there is communication, handle it and send back a response if neccesary
-
     switch (recieveCommand(&sender))
     {
     case VARDMP:     //send back stored values
@@ -110,8 +97,6 @@ void loop() {
         break;
     }
 
-    //!Write functions here
-
     #ifndef SERIALDEBUG
     //Get Gps data
     updateGps(&data.lat, &data.lon);
@@ -129,9 +114,6 @@ void loop() {
     {
         data.biggestAccel = mag;
     }
-    
-    
-    
 
 }
 

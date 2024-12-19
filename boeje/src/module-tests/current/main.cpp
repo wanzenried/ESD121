@@ -12,7 +12,6 @@ void setup()
 {
     pinMode(currentPin, INPUT);
     Serial.begin(9600);
-
 }
 
 void loop()
@@ -26,5 +25,4 @@ void loop()
     Serial.print(",500mA:0.500,0mA:0.0");
     Serial.println();
     delay(10);
-
 }

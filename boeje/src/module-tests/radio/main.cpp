@@ -1,6 +1,7 @@
+//Dummy slave module that just send random values back when requested
+
 #include <Arduino.h>
 #include <common.h>
-
 
 //APC pins
 #define APC_VCC 13  //5v
@@ -27,7 +28,6 @@ void setup()
 
     int err = beginRadio();
 
-
     if (err != 0)
     {
         Serial.print("Could not configure radio, err: ");
@@ -38,14 +38,14 @@ void setup()
 
         while (true) {} // stop other code from running if we receive an error
     }
+    pinMode(A0, INPUT);
+    randomSeed(analogRead(A0));
 
     data.batteryVoltage = random(1,30);
     data.biggestAccel = random(1,30);
     data.lampCycles = random(1,30);
     data.lat = random(1,30);
     data.lon = random(1,30);
-
-
 }
 
 void loop()
@@ -77,7 +77,6 @@ void loop()
     }
 }
 
-
 void packValues(packedData *data, byte *buffer)
 {
     dataLen = sizeof(packedData);
@@ -94,5 +93,4 @@ void packValues(packedData *data, byte *buffer)
     {
         buffer[i] = u.byteArr[i];
     }
-
 }

@@ -26,9 +26,8 @@ void updateCurrent(uint16_t *output)
 
 void registrestroem()
 {
-    if(analogRead(currentPin) > 600){ //Maalet er at maale om spaendingen er stoerre end 3 V, og da 0-5 V paa anlogread svarer til 0-1023, saa bliver 3/5*1023=613, cirka 600.
+    if(analogRead(currentPin) > 600){ //Maalet er at maale om spaendingen er stoerre end 3 V, og da 0-5 V paa analogread svarer til 0-1023, saa bliver 3/5*1023=613, cirka 600.
         registreret = true;
     }
-    
 
 }

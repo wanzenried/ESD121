@@ -5,7 +5,7 @@ byte rInput[50];
 uint8_t rLen;
 
 #ifndef ID
-#define ID 1 //this device id
+#define ID 1 //default ID if id is not set through platformio
 #endif
 
 softAPC radio(APC_TXD, APC_RXD, APC_EN, APC_SET, APC_AUX, ID);

@@ -12,11 +12,7 @@ SoftwareSerial soft(5,4);
 float laengdegrad[50];
 float breddegrad[50];
 int taeller = 0;
-
 int updatedVal = 0;
-
-
-
 
 // Omregner nmea format koordinat til decimal grader, da det er lettere at forstaa for mennesker
 
@@ -84,51 +80,7 @@ bool getkoordinater(char *ting[], char **latitude, char **longitude, char **nord
 
     return (*latitude && **latitude && *longitude && **longitude && **nord && *nord && **oest && *oest);
 }
-// Gemmer decimal grader i arrays
-/*void gemkoordinateriarray(float lat, float lon) {
 
-    if (taeller < 50) {
-
-        breddegrad[taeller] = lat;
-        laengdegrad[taeller] = lon;
-        taeller++;
-    }
-}*/
-// Beregner gennemsnit af decimal grader gemt i array
-/*void gennemsnitsberegner(float *genLat, float *genLon) {
-
-    if (taeller == 0) {
-
-        *genLat = 0;
-        *genLon = 0;
-
-        return;
-    }
-
-    float sumLat = 0, sumLon = 0;
-
-    for (int i = 0; i < taeller; i++) {
-
-        sumLat += breddegrad[i];
-        sumLon += laengdegrad[i];
-    }
-
-    *genLat = sumLat / taeller;
-    *genLon = sumLon / taeller;
-}*/
-//Printer gennemsnit... Duhhh
-/*void printgennemsnit() {
-    float genLat, genLon;
-    gennemsnitsberegner(&genLat, &genLon);
-
-    Serial.print("Gennemsnit Latitude: ");
-    Serial.println(genLat, 6);
-
-    Serial.print("Gennemsnit Longitude: ");
-    Serial.println(genLon, 6);
-
-    taeller = 0; 
-}*/
 //Samlede funktion der caller de fleste funktioner, for at printe koordinater + gennemsnit efter 50 samples eller naar data bliver utilgaengeligt
 void nmeaprinter(char *nmeasat, float *latOutput, float *lonOutput) {
 
